@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'authentication',
     'crispy_forms',
     'crispy_bootstrap5',
+    'account',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -143,7 +144,7 @@ MESSAGE_TAGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/account'
 LOGOUT_REDIRECT_URL = '/login'
 
 
