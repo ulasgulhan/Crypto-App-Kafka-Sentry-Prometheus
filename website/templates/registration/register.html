@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 700px; margin-top:100px;">
+    <div class="card-body">
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}{{form|crispy}}
+            <p>Have an account? Login <a href="{% url 'login' %}">Here</a></p>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+{% endblock  %}

@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{% block title %} Welcome {% endblock %}
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      Crypto-App
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Get your coins now</h5>
+      <p class="card-text">Login or Register this site and manage your acconts</p>
+      <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+      <a href="#" class="btn btn-primary">Register</a>
+    </div>
+  </div>
+{% endblock %}
