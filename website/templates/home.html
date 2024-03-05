@@ -1,15 +1,33 @@
 {%extends 'base.html'%}
-{% block title %} Welcome {% endblock %}
+{% block title %} {{ user.username }} {% endblock %}
 {% block content %}
-<div class="card text-center">
+<h1>All Coins</h1>
+<hr><br><br>
+<div class="card">
     <div class="card-header">
-      Crypto-App
+        <h4 class="card-title">All Coins</h4>
     </div>
     <div class="card-body">
-      <h5 class="card-title">Get your coins now</h5>
-      <p class="card-text">Login or Register this site and manage your acconts</p>
-      <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-      <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+        <div class="table-responsive small">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Detail</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coin in coins.data %}
+                    <tr>
+                        <td>{{ coin.coin }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}

@@ -23,5 +23,5 @@ urlpatterns = [
     path('', views.landing, name='landing'),
     path('', include('django.contrib.auth.urls')),
     path('', include('authentication.urls')),
-    path('', include('account.urls'))
+    path('account/', include('account.urls'))
 ]
