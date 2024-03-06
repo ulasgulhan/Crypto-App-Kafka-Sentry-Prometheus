@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {% block title %} {{ user.username }} {% endblock %}
+{% load custom_filters %}
 {% block content %}
 <h1>All Coins</h1>
 <hr><br><br>
@@ -12,19 +13,22 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Detail</th>
-                        <th>Update</th>
-                        <th>Delete</th>
+                        <th>Coin Name</th>
+                        <th>Price</th>
+                        <th>24H Change</th>
+                        <th>Volume</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for coin in coins.data %}
-                    <tr>
-                        <td>{{ coin.coin }}</td>
-                    </tr>
-                    {% endfor %}
+                        {% for coin in coins.data %}
+                        <tr>
+                            <td>{{ coin.symbol }}</td>
+                            <td>{{ coin.open }}</td>
+                            <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
+                            <td>{{ coin.baseVolume|format_value }}</td>
+                        </tr>
+                        {% endfor %}
+
                 </tbody>
             </table>
         </div>
