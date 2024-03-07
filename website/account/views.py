@@ -19,25 +19,38 @@ def get_big_data(request):
             access_passphrase = form.cleaned_data['access_passphrase']
             secret_key = form.cleaned_data['secret_key']
             timestamp = str(int(time.time_ns() / 1000000))
-            endpoint = '/api/v2/spot/account/info'
-            message = timestamp + 'GET' + endpoint + ''
-            signature = hmac.new(secret_key.encode(), message.encode(), hashlib.sha256).digest()
-            signature_b64 = base64.b64encode(signature).decode()
-            headers = {
+            account_endpoint = '/api/v2/mix/account/account?symbol=btcusdt&productType=USDT-FUTURES&marginCoin=usdt'
+            personal_info_endpoint = '/api/v2/spot/account/info'
+            account_message = timestamp + 'GET' + account_endpoint + ''
+            personal_info_message = timestamp + 'GET' + personal_info_endpoint + ''
+            account_signature = hmac.new(secret_key.encode(), account_message.encode(), hashlib.sha256).digest()
+            info_signature = hmac.new(secret_key.encode(), personal_info_message.encode(), hashlib.sha256).digest()
+            account_signature_b64 = base64.b64encode(account_signature).decode()
+            info_signature_b64 = base64.b64encode(info_signature).decode()
+            personal_info_headers = {
                 'ACCESS-TIMESTAMP': timestamp,
                 'ACCESS-KEY': access_key,
                 'ACCESS-PASSPHRASE': access_passphrase,
-                'ACCESS-SIGN': signature_b64,
+                'ACCESS-SIGN': info_signature_b64,
             }
-            account_response = requests.get('https://api.bitget.com/api/v2/spot/account/info', headers=headers)
+            account_headers = {
+                'ACCESS-TIMESTAMP': timestamp,
+                'ACCESS-KEY': access_key,
+                'ACCESS-PASSPHRASE': access_passphrase,
+                'ACCESS-SIGN': account_signature_b64,
+            }
+            personal_info = requests.get('https://api.bitget.com/api/v2/spot/account/info', headers=personal_info_headers)
+            account_response = requests.get('https://api.bitget.com/api/v2/mix/account/account?symbol=btcusdt&productType=USDT-FUTURES&marginCoin=usdt', headers=account_headers)
             coin_response  = requests.get('https://api.bitget.com/api/v2/spot/market/tickers')
             info = account_response.json()
             coin = coin_response.json()
             user = request.user
+            account = personal_info.json()
             context = {
                     'info': info,
                     'coins': coin,
-                    'user': user
+                    'user': user,
+                    'account': account,
                 }
             return render(request, 'home.html', context)
     else:
