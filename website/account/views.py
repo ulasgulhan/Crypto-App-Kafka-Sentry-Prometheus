@@ -23,13 +23,13 @@ def get_big_data(request):
             message = timestamp + 'GET' + endpoint + ''
             signature = hmac.new(secret_key.encode(), message.encode(), hashlib.sha256).digest()
             signature_b64 = base64.b64encode(signature).decode()
-            account_response = requests.get('https://api.bitget.com/api/v2/spot/account/info', headers={
-                'ACCESS-TIMESTAMP': str(int(time.time_ns() / 1000000)),
+            headers = {
+                'ACCESS-TIMESTAMP': timestamp,
                 'ACCESS-KEY': access_key,
                 'ACCESS-PASSPHRASE': access_passphrase,
                 'ACCESS-SIGN': signature_b64,
-                })
-            print(time.time_ns() / 1000000)
+            }
+            account_response = requests.get('https://api.bitget.com/api/v2/spot/account/info', headers=headers)
             coin_response  = requests.get('https://api.bitget.com/api/v2/spot/market/tickers')
             info = account_response.json()
             coin = coin_response.json()
