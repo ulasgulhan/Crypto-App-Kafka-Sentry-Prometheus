@@ -90,19 +90,3 @@ def get_big_data(request):
         form = APIForm()
     return render(request, 'access.html', {'form': form})
             
-
-
-
-""" @login_required
-def get_coin_data(request):
-    user = request.user
-    url = "https://api.bitget.com/api/v2/spot/market/tickers"
-    response = requests.get(url)
-    
-
-    context = {
-        'coins': response.json(),
-        'user': user,
-    }
-    
-    return render(request, 'home.html', context) """
