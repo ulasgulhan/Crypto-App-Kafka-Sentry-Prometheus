@@ -1,0 +1,78 @@
+{%extends 'base.html'%}
+{% block title %} {{ user.username }} {% endblock %}
+{% load custom_filters %}
+{% block content %}
+<!-- ========================= SECTION MAIN ========================= -->
+
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION  ========================= -->
+<section class="section-name padding-y-sm">
+    <div class="container">
+    
+        
+    <div class="row mt-2">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Your Profile</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>E-mail</th>
+                      <th>Username</th>
+                      <th>Date Joined</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{ user.first_name }}</td>
+                      <td>{{ user.last_name }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>{{ user.username }}</td>
+                      <td>{{ user.date_joined }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Connections</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th>API Key</th>
+                      <th>Website</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>test</td>
+                      <td><a href="{% url "bitget_access" %}" class="btn btn-md btn-success float-end me-2 ms-2">BitGet</a></td>
+                    </tr>
+                    <tr>
+                      <td>test</td>
+                      <td><a href="#" class="btn btn-md btn-success float-end me-2 ms-2">Bybit</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div><!-- container // -->
+    </section>
+{% endblock %}

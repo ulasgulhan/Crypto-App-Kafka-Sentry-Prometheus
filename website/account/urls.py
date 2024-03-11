@@ -4,5 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.get_big_data, name='coin_data'),
-    # path('home/', views.home, name='home')
+    path('profile/', views.profile, name='profile'),
+    path('bitget/access', views.bitget_access, name='bitget_access'),
+    
 ]

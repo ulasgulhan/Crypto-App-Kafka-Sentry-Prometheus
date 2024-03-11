@@ -16,6 +16,19 @@
             <a class="nav-link" href="#">ByBit</a>
           </li>
         </ul>
+        <div class="ms-auto">
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+                <span class="navbar-text me-3">Welcome {{user.username}}</span>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url "logout" %}">Logout</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
+                </li>
+            {% endif %}
+        </ul>
+        </div>
       </div>
     </div>
   </nav>

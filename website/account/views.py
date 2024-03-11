@@ -1,15 +1,38 @@
 import requests
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from .forms import APIForm
 import time
 import hashlib
 import hmac
 import base64
+from django.contrib.auth.models import User
+from .models import BaseAPI
 
 # Create your views here.
 
 
+@login_required
+def profile(request):
+    user = request.user
+    context = {
+        'user': user
+    }
+    return render(request, 'profile.html', context)
+
+
+def bitget_access(request):
+    if request.method == 'POST':
+        form = APIForm(request.POST)
+        if form.is_valid():
+            api = form.save(commit=False)
+            api.user = request.user
+            api.api_key = form.cleaned_data['access_key']
+            api.save()
+            return redirect('coin_data')
+    else:
+        form = APIForm()
+    return render(request, 'access.html', {'form': form})
 
 def get_big_data(request):
     if request.method == 'POST':
