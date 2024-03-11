@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.get_big_data, name='coin_data'),
     path('profile/', views.profile, name='profile'),
     path('bitget', views.bitget, name='bitget'),
+    path('bitget/delete', views.delete_bitget_api, name='delete_bitget'),
     path('bitget/access', views.bitget_access, name='bitget_access'),
     
 ]
