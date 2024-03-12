@@ -1,7 +1,7 @@
 import requests
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from .forms import BitGetAPIForm, ByBitAPIForm
+from account.forms import BitGetAPIForm, ByBitAPIForm
 import time
 import hashlib
 import hmac
@@ -78,43 +78,13 @@ def delete_bybit_api(request):
 
 def bitget(request):
     try:
-        api_info = BitGetAPI.objects.filter(user=request.user)
-        timestamp = str(int(time.time_ns() / 1000000))
-        user = request.user
-        context = {}
-
-        for api in api_info:
-            access_key = api.api_key
-            access_passphrase = api.access_passphrase
-            secret_key = api.secret_key
+        from .services import Bitget
+        api_class = Bitget(request.user)
         
-        api_endpoints = {
-            'account': '/api/v2/mix/account/account?symbol=btcusdt&productType=USDT-FUTURES&marginCoin=usdt',
-            'personal_info': '/api/v2/spot/account/info',
-            'account_assets': '/api/v2/spot/account/assets?assetType=all',
-        }
-
-        headers = {
-            'ACCESS-TIMESTAMP': timestamp,
-            'ACCESS-KEY': access_key,
-            'ACCESS-PASSPHRASE': access_passphrase,
-        }
-
-        for endpoint_name, endpoint_path in api_endpoints.items():
-            message = timestamp + 'GET' + endpoint_path
-            signature = generate_signature(secret_key, message)
-            headers['ACCESS-SIGN'] = signature
-            response = requests.get('https://api.bitget.com' + endpoint_path, headers=headers)
-            context[endpoint_name] = response.json()
-        
-            
-        coin_response  = requests.get('https://api.bitget.com/api/v2/spot/market/tickers')
-        context['coins'] = coin_response.json()
-
-        context['user'] = user
+        context = api_class.get_api_data()
 
         return render(request, 'sites/bitget.html', context)
-    except:
+    except Exception as e:
         return render(request, 'sites/bitget.html')
 
 
