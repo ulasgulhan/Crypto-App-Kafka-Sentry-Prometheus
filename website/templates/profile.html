@@ -59,14 +59,14 @@
                   <tbody>
                     <tr>
                       <td>
-                        {% if connected %}
+                        {% if bitget_connected %}
                             Connected
                         {% else %}
                             Not Connected
                         {% endif %}
                     </td>
                     <td>
-                        {% if connected %}
+                        {% if bitget_connected %}
                         <a href="{% url "delete_bitget" %}" class="btn btn-md btn-success float-end me-2 ms-2">Delete Your Api Key</a>
                         {% else %}
                         <a href="{% url "bitget_access" %}" class="btn btn-md btn-success float-end me-2 ms-2">Connect BitGet</a>
@@ -74,8 +74,19 @@
                     </td>
                     </tr>
                     <tr>
-                      <td>test</td>
-                      <td><a href="#" class="btn btn-md btn-success float-end me-2 ms-2">Bybit</a></td>
+                      <td>                       
+                        {% if bybit_connected %}
+                            Connected
+                        {% else %}
+                            Not Connected
+                        {% endif %}
+                      </td>
+                      <td>                        
+                        {% if bybit_connected %}
+                        <a href="{% url "delete_bybit" %}" class="btn btn-md btn-success float-end me-2 ms-2">Delete Your Api Key</a>
+                        {% else %}
+                        <a href="{% url "bybit_access" %}" class="btn btn-md btn-success float-end me-2 ms-2">Connect Bybit</a>
+                        {% endif %}</td>
                     </tr>
                   </tbody>
                 </table>

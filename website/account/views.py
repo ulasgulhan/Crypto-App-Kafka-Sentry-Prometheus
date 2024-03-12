@@ -15,14 +15,22 @@ from .models import BitGetAPI, BybitAPI
 @login_required
 def profile(request):
     user = request.user
-    api_info = BitGetAPI.objects.filter(user=request.user)
-    if api_info:
-        connected = True
-    else:
-        connected = False
+    bybit_connected = False
+    bitget_connected = False
+
+    bitget_api_info = BitGetAPI.objects.filter(user=request.user)
+    bybit_api_info = BybitAPI.objects.filter(user=request.user)
+
+    if bitget_api_info:
+        bitget_connected = True
+    
+    if bybit_api_info:
+        bybit_connected = True
+
     context = {
         'user': user,
-        'connected': connected
+        'bitget_connected': bitget_connected,
+        'bybit_connected': bybit_connected,
     }
     return render(request, 'profile.html', context)
 
@@ -57,6 +65,12 @@ def bybit_access(request):
 
 def delete_bitget_api(request):
     api_info = BitGetAPI.objects.filter(user=request.user)
+    api_info.delete()
+    return redirect('profile')
+
+
+def delete_bybit_api(request):
+    api_info = BybitAPI.objects.filter(user=request.user)
     api_info.delete()
     return redirect('profile')
 
@@ -101,6 +115,26 @@ def bitget(request):
         return render(request, 'sites/bitget.html', context)
     except:
         return render(request, 'sites/bitget.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def get_big_data(request):
@@ -180,5 +214,5 @@ def get_big_data(request):
             return render(request, 'home.html', context)
     else:
         form = BitGetAPIForm()
-    return render(request, 'access.html', {'form': form})
+    return render(request, 'access.html', {'bitget_form': form})
             
