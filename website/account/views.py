@@ -8,6 +8,7 @@ import hmac
 import base64
 from .utilities import generate_signature
 from .models import BitGetAPI, BybitAPI
+from pybit.unified_trading import HTTP
 
 # Create your views here.
 
@@ -115,6 +116,50 @@ def bitget(request):
         return render(request, 'sites/bitget.html', context)
     except:
         return render(request, 'sites/bitget.html')
+
+
+def bybit(request):
+    try:
+        api_info = BybitAPI.objects.filter(user=request.user)
+        timestamp = str(int(time.time_ns() / 1000000))
+        user = request.user
+        context = {}
+
+        for api in api_info:
+            access_key = api.api_key
+            secret_key = api.secret_key
+        
+        print(access_key)
+
+        
+        api_endpoints = {
+            'account': '/v5/account/wallet-balance',
+        }
+
+        params = 'accountType=UNIFIED'
+
+
+        headers = {
+            'X-BAPI-TIMESTAMP': timestamp,
+            'X-BAPI-API-KEY': access_key,
+            'X-BAPI-RECV-WINDOW': str(5000)
+        }
+        for endpoint_name, endpoint_path in api_endpoints.items():
+            message = timestamp + access_key + str(5000) + params
+            hash = hmac.new(bytes(secret_key, "utf-8"), message.encode("utf-8"), hashlib.sha256)
+            signature = hash.hexdigest()
+            headers['X-BAPI-SIGN'] = signature
+            response = requests.get('https://api.bybit.com' + endpoint_path + '?' + params, headers=headers)
+            print(response)
+            context[endpoint_name] = response.json()
+
+        
+        context['user'] = user
+        print(context)
+        return render(request, 'sites/bybit.html', context)
+    except:
+        return render(request, 'sites/bybit.html')
+
 
 
 
