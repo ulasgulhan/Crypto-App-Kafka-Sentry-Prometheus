@@ -3,10 +3,17 @@
 {% block content %}
 <div class="card mx-auto" style="max-width: 700px; margin-top:100px;">
     <div class="card-body">
+        {% if bitget_form %}
         <form method="POST">
-            {% csrf_token %}{{form|crispy}}
+            {% csrf_token %}{{bitget_form|crispy}}
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        {% elif bybit_form %}
+        <form method="POST">
+            {% csrf_token %}{{bybit_form|crispy}}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% endif %}
     </div>
 </div>
 {% endblock  %}
