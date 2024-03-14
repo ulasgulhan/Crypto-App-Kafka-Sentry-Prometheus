@@ -50,16 +50,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for asset in account_assets.data %}
-                        {% if asset.available >= '0' %}
-                        <tr>
-                            <td>{{ asset.coin }}</td>
-                            <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
-                            <td>{{ asset.available }}</td>
-                            <td>{{ asset.frozen|add:asset.locked }}</td>
-                        </tr>
+                    {% with has_assets=False %}
+                        {% for asset in account_assets.data %}
+                            {% if asset.available > '0' %}
+                                {% with has_assets=True %}
+                                    <tr>
+                                        <td>{{ asset.coin }}</td>
+                                        <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
+                                        <td>{{ asset.available }}</td>
+                                        <td>{{ asset.frozen|add:asset.locked }}</td>
+                                    </tr>
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if not has_assets %}
+                            <tr>
+                                <td colspan="5">You have no assets in your account</td>
+                            </tr>
                         {% endif %}
-                    {% endfor %}
+                    {% endwith %}
                 </tbody>
             </table>
 <div class="card">
