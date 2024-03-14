@@ -16,3 +16,11 @@ def format_value(value):
         return f'{float(value) / 10**3:.2f}K'
     else:
         return float(value)
+
+@register.filter
+def extract(value, arg):
+    return float(value) - float(arg)
+
+@register.filter
+def division(value, arg):
+    return float(value) / float(arg)

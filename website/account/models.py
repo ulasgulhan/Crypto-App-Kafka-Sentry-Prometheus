@@ -8,7 +8,7 @@ class APIEndpoints(models.Model):
     api_site_name   = models.CharField(max_length=200)
     endpoint_name   = models.CharField(max_length=200)
     endpoint_url    = models.CharField(max_length=200)
-    endpoint_params = models.CharField(max_length=200, blank=True)
+    endpoint_params = models.CharField(max_length=200, blank=True, null=True)
     auth_required   = models.BooleanField()
     method          = models.CharField(max_length=200)
 

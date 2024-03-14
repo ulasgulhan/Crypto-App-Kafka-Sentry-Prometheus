@@ -23,13 +23,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ info.data.userId }}</td>
+                        <td>{{ bybit_account_assets_fund.result.memberId }}</td>
                         <td> {% for auth in info.data.authorities %} {{auth}}, {% endfor %}</td>
-                        <td>{{ info.data.traderType }}</td>
-                        <td>{{ account.data.marginCoin }}</td>
-                        <td>{{ account.result.list.0.totalEquity }}</td>
-                        <td>{{ account.data.usdtEquity }}</td>
-                        <td>{{ account.data.btcEquity }}</td>
+                        <td>{{ bybit_account.result.list.0.accountType }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.1.coin }}</td>
+                        <td>{{ bybit_account.result.list.0.totalEquity }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.1.equity }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.0.equity }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -50,16 +50,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for asset in assets.data %}
-                        {% if asset.available >= '0' %}
-                        <tr>
-                            <td>{{ asset.coin }}</td>
-                            <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
-                            <td>{{ asset.available }}</td>
-                            <td>{{ asset.frozen|add:asset.locked }}</td>
-                        </tr>
-                        {% endif %}
-                    {% endfor %}
+                    {% if bybit_account_assets_fund.result.balance %}
+                        {% for asset in bybit_account_assets_fund.result.balance %}
+                            <tr>
+                                <td>{{ asset.coin }}</td>
+                                <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
+                                <td>{{ asset.available }}</td>
+                                <td>{{ asset.frozen|add:asset.locked }}</td>
+                            </tr>
+
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5">You have no assets in your account</td>
+                    </tr>
+                    {% endif %}
+
                 </tbody>
             </table>
 <div class="card">
@@ -79,12 +85,12 @@
                 </thead>
                 <tbody>
 
-                        {% for coin in coins.data %}
+                        {% for coin in bybit_coins.result.list %}
                         <tr>
                             <td>{{ coin.symbol }}</td>
-                            <td>{{ coin.open }}</td>
-                            <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
-                            <td>{{ coin.baseVolume|format_value }}</td>
+                            <td>{{ coin.lastPrice }}</td>
+                            <td>{{ coin.highPrice24h|extract:coin.lowPrice24h|division:coin.lowPrice24h|multiply:100|floatformat:"2" }}%</td>
+                            <td>{{ coin.volume24h|format_value }}</td>
                         </tr>
                         {% endfor %}
 

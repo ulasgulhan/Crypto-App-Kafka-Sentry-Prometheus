@@ -14,8 +14,10 @@ class Bybit(CryptoMarketPlace):
 
     def generate_headers(self, params):
         api_info = BybitAPI.objects.get(user=self.user)
-
-        message = self.timestamp + api_info.api_key + str(5000) + params
+        if params.startswith('/'):
+            message = self.timestamp + api_info.api_key + str(5000)
+        else:
+            message = self.timestamp + api_info.api_key + str(5000) + params
 
         headers = {
             'X-BAPI-TIMESTAMP': self.timestamp,

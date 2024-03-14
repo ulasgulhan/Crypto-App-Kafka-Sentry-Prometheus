@@ -9,6 +9,7 @@ import base64
 from .utilities import bybit_signature
 from .models import BitGetAPI, BybitAPI
 from pybit.unified_trading import HTTP
+from pprint import pprint
 
 # Create your views here.
 
@@ -82,7 +83,6 @@ def bitget(request):
         api_class = Bitget(request.user)
         
         context = api_class.get_api_data()
-
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         return render(request, 'sites/bitget.html')
@@ -94,7 +94,8 @@ def bybit(request):
 
         api_class = Bybit(request.user)
         context = api_class.get_api_data()
-        
+        pprint(context)
+
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
         print(e)
