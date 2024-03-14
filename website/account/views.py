@@ -1,13 +1,13 @@
 import requests
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from account.forms import BitGetAPIForm, ByBitAPIForm
+from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
 import time
 import hashlib
 import hmac
 import base64
 from .utilities import bybit_signature
-from .models import BitGetAPI, BybitAPI
+from .models import BitGetAPI, BybitAPI, OkxAPI
 from pybit.unified_trading import HTTP
 from pprint import pprint
 
@@ -19,20 +19,26 @@ def profile(request):
     user = request.user
     bybit_connected = False
     bitget_connected = False
+    okx_connected = False
 
     bitget_api_info = BitGetAPI.objects.filter(user=request.user)
     bybit_api_info = BybitAPI.objects.filter(user=request.user)
+    okx_api_info = OkxAPI.objects.filter(user=request.user)
 
     if bitget_api_info:
         bitget_connected = True
     
     if bybit_api_info:
         bybit_connected = True
+    
+    if okx_api_info:
+        okx_connected = True
 
     context = {
         'user': user,
         'bitget_connected': bitget_connected,
         'bybit_connected': bybit_connected,
+        'okx_connected': okx_connected,
     }
     return render(request, 'profile.html', context)
 
@@ -65,6 +71,20 @@ def bybit_access(request):
     return render(request, 'access.html', {'bybit_form': form})
 
 
+def okx_access(request):
+    if request.method == 'POST':
+        form = OkxAPIFrom(request.POST)
+        if form.is_valid():
+            api = form.save(commit=False)
+            api.user = request.user
+            api.api_key = form.cleaned_data['access_key']
+            api.save()
+            return redirect('all_data')
+    else:
+        form = OkxAPIFrom()
+    return render(request, 'access.html', {'bybit_form': form})
+
+
 def delete_bitget_api(request):
     api_info = BitGetAPI.objects.filter(user=request.user)
     api_info.delete()
@@ -73,6 +93,12 @@ def delete_bitget_api(request):
 
 def delete_bybit_api(request):
     api_info = BybitAPI.objects.filter(user=request.user)
+    api_info.delete()
+    return redirect('profile')
+
+
+def delete_okx_api(request):
+    api_info = OkxAPI.objects.filter(user=request.user)
     api_info.delete()
     return redirect('profile')
 
@@ -100,6 +126,15 @@ def bybit(request):
     except Exception as e:
         print(e)
         return render(request, 'sites/bybit.html')
+
+
+def okx(request):
+    try:
+        context = {}
+        return render(request, 'sites/okx.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'sites/okx.html')
 
 
 

@@ -31,3 +31,8 @@ class BybitAPI(BaseAPI):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bybit_api')
 
 
+class OkxAPI(BaseAPI):
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='okx_api')
+    
+
+

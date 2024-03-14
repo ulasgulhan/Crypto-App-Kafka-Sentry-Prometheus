@@ -1,0 +1,102 @@
+{%extends 'base.html'%}
+{% block title %} {{ user.username }} {% endblock %}
+{% load custom_filters %}
+{% block content %}
+<br>
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Personal Info</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive small">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Authorities</th>
+                        <th>Trader Type</th>
+                        <th>Margin Coin</th>
+                        <th>Account Equity</th>
+                        <th>USDT Equity</th>
+                        <th>BTC Equity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ bybit_account_assets_fund.result.memberId }}</td>
+                        <td> {% for auth in info.data.authorities %} {{auth}}, {% endfor %}</td>
+                        <td>{{ bybit_account.result.list.0.accountType }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.1.coin }}</td>
+                        <td>{{ bybit_account.result.list.0.totalEquity }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.1.equity }}</td>
+                        <td>{{ bybit_account.result.list.0.coin.0.equity }}</td>
+                    </tr>
+                </tbody>
+            </table>
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Account Assets</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive small">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Coin Name</th>
+                        <th>Total Balance</th>
+                        <th>Available</th>
+                        <th>Reserved</th>
+                        <th>Today's PnL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if bybit_account_assets_fund.result.balance %}
+                        {% for asset in bybit_account_assets_fund.result.balance %}
+                            <tr>
+                                <td>{{ asset.coin }}</td>
+                                <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
+                                <td>{{ asset.available }}</td>
+                                <td>{{ asset.frozen|add:asset.locked }}</td>
+                            </tr>
+
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5">You have no assets in your account</td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+            </table>
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">All Coins</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive small">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>Coin Name</th>
+                        <th>Price</th>
+                        <th>24H Change</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                        {% for coin in bybit_coins.result.list %}
+                        <tr>
+                            <td>{{ coin.symbol }}</td>
+                            <td>{{ coin.lastPrice }}</td>
+                            <td>{{ coin.highPrice24h|extract:coin.lowPrice24h|division:coin.lowPrice24h|multiply:100|floatformat:"2" }}%</td>
+                            <td>{{ coin.volume24h|format_value }}</td>
+                        </tr>
+                        {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

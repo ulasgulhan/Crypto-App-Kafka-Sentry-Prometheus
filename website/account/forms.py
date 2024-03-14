@@ -1,5 +1,5 @@
 from django import forms
-from .models import BitGetAPI, BybitAPI
+from .models import BitGetAPI, BybitAPI, OkxAPI
 
 
 class BitGetAPIForm(forms.ModelForm):
@@ -19,3 +19,13 @@ class ByBitAPIForm(forms.ModelForm):
     class Meta:
         model = BybitAPI
         fields = ['access_key', 'secret_key']
+
+
+class OkxAPIFrom(forms.ModelForm):
+    access_key = forms.CharField(label='access_key', max_length=200, required=True)
+    access_passphrase = forms.CharField(label='access_passphrase', max_length=200, required=True, widget=forms.PasswordInput)
+    secret_key = forms.CharField(label='secret_key', max_length=200, required=True, widget=forms.PasswordInput)
+
+    class Meta:
+        model = OkxAPI
+        fields = ['access_key', 'access_passphrase', 'secret_key']
