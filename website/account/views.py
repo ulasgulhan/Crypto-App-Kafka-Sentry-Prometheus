@@ -85,6 +85,7 @@ def bitget(request):
         context = api_class.get_api_data()
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
+        print(e)
         return render(request, 'sites/bitget.html')
 
 
@@ -94,7 +95,6 @@ def bybit(request):
 
         api_class = Bybit(request.user)
         context = api_class.get_api_data()
-        pprint(context)
 
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
