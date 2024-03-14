@@ -10,3 +10,9 @@ def bybit_signature(secret_key, message):
     hash = hmac.new(bytes(secret_key, "utf-8"), message.encode("utf-8"), hashlib.sha256)
     signature = hash.hexdigest()
     return signature
+
+
+def okx_signature(secret_key, message):
+    hash = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
+    signature = hash.digest()
+    return base64.b64encode(signature)

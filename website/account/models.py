@@ -33,6 +33,8 @@ class BybitAPI(BaseAPI):
 
 class OkxAPI(BaseAPI):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='okx_api')
+    access_passphrase = models.CharField(max_length=200)
+
     
 
 

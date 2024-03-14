@@ -130,7 +130,11 @@ def bybit(request):
 
 def okx(request):
     try:
-        context = {}
+        from .services.okx import OKX
+
+        api_class = OKX(request.user)
+        context = api_class.get_api_data()
+        pprint(context)
         return render(request, 'sites/okx.html', context)
     except Exception as e:
         print(e)
