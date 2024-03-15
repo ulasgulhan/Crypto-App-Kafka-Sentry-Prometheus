@@ -134,7 +134,7 @@ def okx(request):
 
         api_class = OKX(request.user)
         context = api_class.get_api_data()
-        pprint(context)
+        pprint(context['okx_account_assets'])
         return render(request, 'sites/okx.html', context)
     except Exception as e:
         print(e)

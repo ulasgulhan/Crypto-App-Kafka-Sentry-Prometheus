@@ -85,12 +85,12 @@
                 </thead>
                 <tbody>
 
-                        {% for coin in bybit_coins.result.list %}
+                        {% for coin in okx_coins.data %}
                         <tr>
-                            <td>{{ coin.symbol }}</td>
-                            <td>{{ coin.lastPrice }}</td>
-                            <td>{{ coin.highPrice24h|extract:coin.lowPrice24h|division:coin.lowPrice24h|multiply:100|floatformat:"2" }}%</td>
-                            <td>{{ coin.volume24h|format_value }}</td>
+                            <td>{{ coin.instId }}</td>
+                            <td>{{ coin.last }}</td>
+                            <td>{{ coin.high24h|extract:coin.low24h|division:coin.low24h|multiply:100|floatformat:"2" }}%</td>
+                            <td>{{ coin.vol24h|format_value }}</td>
                         </tr>
                         {% endfor %}
 
