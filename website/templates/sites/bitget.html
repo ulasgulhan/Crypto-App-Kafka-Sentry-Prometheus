@@ -13,7 +13,6 @@
                 <thead>
                     <tr>
                         <th>User ID</th>
-                        <th>Authorities</th>
                         <th>Trader Type</th>
                         <th>Margin Coin</th>
                         <th>Account Equity</th>
@@ -24,7 +23,6 @@
                 <tbody>
                     <tr>
                         <td>{{ personal_info.data.userId }}</td>
-                        <td> {% for auth in personal_info.data.authorities %} {{auth}}, {% endfor %}</td>
                         <td>{{ personal_info.data.traderType }}</td>
                         <td>{{ account.data.marginCoin }}</td>
                         <td>{{ account.data.accountEquity }}</td>

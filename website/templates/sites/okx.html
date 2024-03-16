@@ -13,7 +13,6 @@
                 <thead>
                     <tr>
                         <th>User ID</th>
-                        <th>Authorities</th>
                         <th>Trader Type</th>
                         <th>Margin Coin</th>
                         <th>Account Equity</th>
@@ -24,7 +23,6 @@
                 <tbody>
                     <tr>
                         <td>{{ okx_info.data.0.uid }}</td>
-                        <td> {% for auth in info.data.authorities %} {{auth}}, {% endfor %}</td>
                         <td>{{ bybit_account.result.list.0.accountType }}</td>
                         <td>{{ bybit_account.result.list.0.coin.1.coin }}</td>
                         <td>{{ bybit_account.result.list.0.totalEquity }}</td>
