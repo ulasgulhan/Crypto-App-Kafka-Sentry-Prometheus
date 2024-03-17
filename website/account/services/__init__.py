@@ -13,6 +13,7 @@ class CryptoMarketPlace():
         self.domain = None
         self.api_model = APIEndpoints
 
+
     def generate_headers(self, url=None, params=None):
         return None
     

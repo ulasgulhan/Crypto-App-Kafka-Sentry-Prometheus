@@ -1,7 +1,7 @@
 from . import CryptoMarketPlace
 import time
 from ..models import BitGetAPI
-from ..utilities import generate_signature
+from ..utilities import generate_signature, decode
 
 
 class Bitget(CryptoMarketPlace):
@@ -17,12 +17,12 @@ class Bitget(CryptoMarketPlace):
         api_info = BitGetAPI.objects.get(user=self.user)
 
         message = self.timestamp + 'GET' + endpoint_path
-
+        
         headers = {
             'ACCESS-TIMESTAMP': self.timestamp,
-            'ACCESS-KEY': api_info.api_key,
-            'ACCESS-PASSPHRASE': api_info.access_passphrase,
-            'ACCESS-SIGN': generate_signature(api_info.secret_key, message)
+            'ACCESS-KEY': decode(api_info.api_key),
+            'ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
+            'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message)
         }
 
         return headers
