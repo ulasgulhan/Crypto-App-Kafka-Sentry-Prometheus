@@ -20,9 +20,9 @@ class Bitget(CryptoMarketPlace):
         
         headers = {
             'ACCESS-TIMESTAMP': self.timestamp,
-            'ACCESS-KEY': decode(api_info.api_key),
-            'ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
-            'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message)
+            'ACCESS-KEY': api_info.api_key,
+            'ACCESS-PASSPHRASE': api_info.access_passphrase,
+            'ACCESS-SIGN': generate_signature(api_info.secret_key, message)
         }
 
         return headers

@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
 from .models import BitGetAPI, BybitAPI, OkxAPI
+from pprint import pprint
 
 # Create your views here.
 
@@ -108,6 +109,7 @@ def bitget(request):
         api_class = Bitget(request.user)
         
         context = api_class.get_api_data()
+
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         print(e)
@@ -122,6 +124,8 @@ def bybit(request):
         api_class = Bybit(request.user)
         context = api_class.get_api_data()
 
+        pprint(context['bybit_info'])
+        print(context.keys())
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
         print(e)

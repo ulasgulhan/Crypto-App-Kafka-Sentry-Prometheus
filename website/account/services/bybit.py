@@ -1,7 +1,7 @@
 from . import CryptoMarketPlace
 import time
 from ..models import BybitAPI
-from ..utilities import bybit_signature, decode
+from ..utilities import bybit_signature
 
 
 class Bybit(CryptoMarketPlace):
@@ -14,7 +14,6 @@ class Bybit(CryptoMarketPlace):
 
     def generate_headers(self, params):
         api_info = BybitAPI.objects.get(user=self.user)
-        api_info.api_key = decode(api_info.api_key)
         if params.startswith('/'):
             message = self.timestamp + api_info.api_key + str(5000)
         else:
@@ -24,7 +23,7 @@ class Bybit(CryptoMarketPlace):
             'X-BAPI-TIMESTAMP': self.timestamp,
             'X-BAPI-API-KEY': api_info.api_key,
             'X-BAPI-RECV-WINDOW': str(5000),
-            'X-BAPI-SIGN': bybit_signature(decode(api_info.secret_key), message)
+            'X-BAPI-SIGN': bybit_signature(api_info.secret_key, message)
         }
 
         return headers
@@ -38,5 +37,3 @@ class Bybit(CryptoMarketPlace):
             context[endpoint.endpoint_name] = self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params)
 
         return context
-
-

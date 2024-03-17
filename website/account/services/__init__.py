@@ -1,5 +1,6 @@
 import requests
 from ..models import APIEndpoints
+from ..utilities import decode
 
 
 # yapılacaklar servis api endpointleri dbye kaydedilsin dbdn gelsin auth header required false true gelsin
@@ -12,7 +13,7 @@ class CryptoMarketPlace():
         self.db_model = None
         self.domain = None
         self.api_model = APIEndpoints
-
+        
 
     def generate_headers(self, url=None, params=None):
         return None
