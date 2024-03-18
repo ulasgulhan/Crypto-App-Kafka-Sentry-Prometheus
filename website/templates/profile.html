@@ -53,16 +53,16 @@
                   <thead>
                     <tr>
                       <th>API Key</th>
-                      <th>Website</th>
+                      <th class="d-flex flex-row-reverse">Connect</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td>
                         {% if bitget_connected %}
-                            Connected
+                            BitGet API is Connected
                         {% else %}
-                            Not Connected
+                            BitGet API is Not Connected
                         {% endif %}
                     </td>
                     <td>
@@ -76,9 +76,9 @@
                     <tr>
                       <td>                       
                         {% if bybit_connected %}
-                            Connected
+                            ByBit API is Connected
                         {% else %}
-                            Not Connected
+                            ByBit API is Not Connected
                         {% endif %}
                       </td>
                       <td>                        
@@ -91,9 +91,9 @@
                     <tr>
                       <td>                       
                         {% if okx_connected %}
-                            Connected
+                            OKX API is Connected
                         {% else %}
-                            Not Connected
+                            OKX API is Not Connected
                         {% endif %}
                       </td>
                       <td>                        

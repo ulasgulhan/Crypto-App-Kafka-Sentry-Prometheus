@@ -36,6 +36,8 @@ def profile(request):
     return render(request, 'profile.html', context)
 
 
+# region Access
+
 @login_required
 def bitget_access(request):
     if request.method == 'POST':
@@ -80,6 +82,10 @@ def okx_access(request):
         form = OkxAPIFrom()
     return render(request, 'access.html', {'bybit_form': form})
 
+# endregion
+
+
+# region Delete
 
 @login_required
 def delete_bitget_api(request):
@@ -101,6 +107,10 @@ def delete_okx_api(request):
     api_info.delete()
     return redirect('profile')
 
+# endregion
+
+
+# region Crypto Sites
 
 @login_required
 def bitget(request):
@@ -155,3 +165,5 @@ def get_big_data(request):
         form = BitGetAPIForm()
     return render(request, 'access.html', {'bitget_form': form})
              
+# e
+
