@@ -4,6 +4,11 @@ import base64
 
 # Create your models here.
 
+METHODS_CHOICES = [
+    ('GET', 'GET'),
+    ('POST', 'POST')
+]
+
 
 class APIEndpoints(models.Model):
     api_site_name   = models.CharField(max_length=200)
@@ -11,7 +16,7 @@ class APIEndpoints(models.Model):
     endpoint_url    = models.CharField(max_length=200)
     endpoint_params = models.CharField(max_length=200, blank=True, null=True)
     auth_required   = models.BooleanField()
-    method          = models.CharField(max_length=200)
+    method          = models.CharField(max_length=200, choices=METHODS_CHOICES)
 
 
 class BaseAPI(models.Model):
