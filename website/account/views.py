@@ -1,9 +1,11 @@
+from django.db import DatabaseError
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
 from .models import BitGetAPI, BybitAPI, OkxAPI
 from pprint import pprint
-from django.contrib import messages
+import asyncio
+from asgiref.sync import sync_to_async
 
 # Create your views here.
 
@@ -118,8 +120,9 @@ def bitget(request):
     try:
         from .services.bitget import Bitget
         api_class = Bitget(request.user)
-        
-        context = api_class.get_api_data()
+
+        context = asyncio.run(api_class.get_api_data())
+
 
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
@@ -133,7 +136,7 @@ def bybit(request):
         from .services.bybit import Bybit
 
         api_class = Bybit(request.user)
-        context = api_class.get_api_data()
+        context = asyncio.run(api_class.get_api_data())
 
         print(context['bybit_info'])
 
@@ -149,7 +152,7 @@ def okx(request):
         from .services.okx import OKX
 
         api_class = OKX(request.user)
-        context = api_class.get_api_data()
+        context = asyncio.run(api_class.get_api_data())
         return render(request, 'sites/okx.html', context)
     except Exception as e:
         print(e)

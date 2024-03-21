@@ -3,6 +3,7 @@ import time
 from ..models import OkxAPI
 from ..utilities import okx_signature, decode
 import datetime as dt
+import asyncio
 
 
 
@@ -29,12 +30,12 @@ class OKX(CryptoMarketPlace):
         return headers
     
 
-    def get_api_data(self):
+    async def get_api_data(self):
         context = {}
 
-        api_endpoints = self.get_api_endpoints('okx')
+        api_endpoints = await self.get_api_endpoints('okx')
 
         for endpoint in api_endpoints:
-            context[endpoint.endpoint_name] = self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
+            context[endpoint.endpoint_name] = await self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
 
         return context

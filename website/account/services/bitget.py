@@ -2,6 +2,8 @@ from . import CryptoMarketPlace
 import time
 from ..models import BitGetAPI
 from ..utilities import generate_signature, decode
+import asyncio
+from asgiref.sync import sync_to_async
 
 
 class Bitget(CryptoMarketPlace):
@@ -28,12 +30,13 @@ class Bitget(CryptoMarketPlace):
         return headers
     
 
-    def get_api_data(self):
+    async def get_api_data(self):
         context = {}
 
-        api_endpoints = self.get_api_endpoints('bitget')
+        api_endpoints = await self.get_api_endpoints('bitget')
         
         for endpoint in api_endpoints:
-            context[endpoint.endpoint_name] = self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
+            context[endpoint.endpoint_name] = await self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
+            
 
         return context

@@ -2,6 +2,7 @@ from . import CryptoMarketPlace
 import time
 from ..models import BybitAPI
 from ..utilities import bybit_signature, decode
+import asyncio
 
 
 class Bybit(CryptoMarketPlace):
@@ -28,12 +29,12 @@ class Bybit(CryptoMarketPlace):
 
         return headers
     
-    def get_api_data(self):
+    async def get_api_data(self):
         context = {}
 
-        api_endpoints = self.get_api_endpoints('bybit')
+        api_endpoints = await self.get_api_endpoints('bybit')
 
         for endpoint in api_endpoints:
-            context[endpoint.endpoint_name] = self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params)
+            context[endpoint.endpoint_name] = await self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params)
 
         return context

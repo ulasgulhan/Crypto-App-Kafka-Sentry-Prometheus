@@ -1,6 +1,7 @@
 import requests
 from ..models import APIEndpoints
 from ..utilities import decode
+from asgiref.sync import sync_to_async
 
 
 # yapılacaklar servis api endpointleri dbye kaydedilsin dbdn gelsin auth header required false true gelsin
@@ -19,10 +20,12 @@ class CryptoMarketPlace():
         return None
     
 
+    @sync_to_async
     def get_api_endpoints(self, website):
-        return APIEndpoints.objects.filter(api_site_name=website)
+        return list(APIEndpoints.objects.filter(api_site_name=website))
 
 
+    @sync_to_async
     def fetcher(self, auth_header_required=False, url=None, method=None, params=None):
         if params:
             if auth_header_required:
