@@ -14,16 +14,16 @@ class OKX(CryptoMarketPlace):
         self.domain = 'https://www.okx.com'
     
 
-    def generate_headers(self, endpoint_path):
+    def generate_headers(self, url=None, params=None):
         api_info = OkxAPI.objects.get(user=self.user)
 
-        message = self.timestamp + 'GET' + endpoint_path
+        message = self.timestamp + 'GET' + url
 
         headers = {
             'OK-ACCESS-TIMESTAMP': self.timestamp,
-            'OK-ACCESS-KEY': api_info.api_key,
-            'OK-ACCESS-PASSPHRASE': api_info.access_passphrase,
-            'OK-ACCESS-SIGN': okx_signature(api_info.secret_key, message)
+            'OK-ACCESS-KEY': decode(api_info.api_key),
+            'OK-ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
+            'OK-ACCESS-SIGN': okx_signature(decode(api_info.secret_key), message)
         }
 
         return headers

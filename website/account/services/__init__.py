@@ -26,13 +26,13 @@ class CryptoMarketPlace():
     def fetcher(self, auth_header_required=False, url=None, method=None, params=None):
         if params:
             if auth_header_required:
-                headers = self.generate_headers(params)
+                headers = self.generate_headers(params=params)
                 response = requests.request(method, self.domain + url + '?' + params, headers=headers)
             else:
                 response = requests.request(method, self.domain + url)
         else:
             if auth_header_required:
-                headers = self.generate_headers(url)
+                headers = self.generate_headers(url=url)
                 response = requests.request(method, self.domain + url, headers=headers)
             else:
                 response = requests.request(method, self.domain + url)

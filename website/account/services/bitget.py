@@ -13,16 +13,16 @@ class Bitget(CryptoMarketPlace):
         self.domain = "https://api.bitget.com"
 
 
-    def generate_headers(self, endpoint_path):
+    def generate_headers(self, url=None, params=None):
         api_info = BitGetAPI.objects.get(user=self.user)
 
-        message = self.timestamp + 'GET' + endpoint_path
+        message = self.timestamp + 'GET' + url
         
         headers = {
             'ACCESS-TIMESTAMP': self.timestamp,
-            'ACCESS-KEY': api_info.api_key,
-            'ACCESS-PASSPHRASE': api_info.access_passphrase,
-            'ACCESS-SIGN': generate_signature(api_info.secret_key, message)
+            'ACCESS-KEY': decode(api_info.api_key),
+            'ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
+            'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message)
         }
 
         return headers

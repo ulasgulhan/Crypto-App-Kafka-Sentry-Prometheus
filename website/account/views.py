@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
 from .models import BitGetAPI, BybitAPI, OkxAPI
 from pprint import pprint
+from django.contrib import messages
 
 # Create your views here.
 
@@ -134,8 +135,8 @@ def bybit(request):
         api_class = Bybit(request.user)
         context = api_class.get_api_data()
 
-        pprint(context['bybit_info'])
-        print(context.keys())
+        print(context['bybit_info'])
+
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
         print(e)

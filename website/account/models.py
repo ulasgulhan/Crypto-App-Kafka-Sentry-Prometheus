@@ -27,7 +27,7 @@ class BaseAPI(models.Model):
         abstract = True
     
 
-"""     def encode(self, value):
+    def encode(self, value):
         return base64.b64encode(value.encode()).decode()
 
     def save(self, *args, **kwargs):
@@ -35,17 +35,17 @@ class BaseAPI(models.Model):
             self.api_key = self.encode(self.api_key)
             self.secret_key = self.encode(self.secret_key)
         super().save(*args, **kwargs)
- """
+
 
 
 class BitGetAPI(BaseAPI):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bitget_api')
     access_passphrase = models.CharField(max_length=200)
 
-"""     def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if not self.id:
             self.access_passphrase = self.encode(self.access_passphrase)
-        super().save(*args, **kwargs) """
+        super().save(*args, **kwargs)
 
 
 class BybitAPI(BaseAPI):
@@ -56,10 +56,10 @@ class OkxAPI(BaseAPI):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='okx_api')
     access_passphrase = models.CharField(max_length=200)
 
-"""     def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if not self.id:
             self.access_passphrase = self.encode(self.access_passphrase)
-        super().save(*args, **kwargs) """
+        super().save(*args, **kwargs)
 
 
     
