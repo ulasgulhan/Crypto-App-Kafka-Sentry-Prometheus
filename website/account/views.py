@@ -120,9 +120,9 @@ def bitget(request):
     try:
         from .services.bitget import Bitget
         api_class = Bitget(request.user)
-
+        print('running get api data')
         context = asyncio.run(api_class.get_api_data())
-
+        print('finish running')
 
         return render(request, 'sites/bitget.html', context)
     except Exception as e:

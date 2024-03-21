@@ -2,7 +2,7 @@ from . import CryptoMarketPlace
 import time
 from ..models import BybitAPI
 from ..utilities import bybit_signature, decode
-import asyncio
+from asgiref.sync import sync_to_async
 
 
 class Bybit(CryptoMarketPlace):
@@ -13,8 +13,9 @@ class Bybit(CryptoMarketPlace):
         self.domain = 'https://api.bybit.com'
     
 
-    def generate_headers(self, url=None, params=''):
-        api_info = BybitAPI.objects.get(user=self.user)
+    
+    async def generate_headers(self, url=None, params=''):
+        api_info = await sync_to_async(BybitAPI.objects.get)(user=self.user)
         api_key = decode(api_info.api_key)
         api_secret_key = decode(api_info.secret_key)
         message = self.timestamp + api_key + str(5000) + params

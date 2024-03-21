@@ -3,9 +3,8 @@ import hmac
 import base64
 
 
-
 def decode(data):
-    return base64.b64decode(data).decode()
+    return  base64.b64decode(data).decode()
 
 
 def generate_signature(secret_key, message):

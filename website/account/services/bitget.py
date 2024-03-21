@@ -2,7 +2,6 @@ from . import CryptoMarketPlace
 import time
 from ..models import BitGetAPI
 from ..utilities import generate_signature, decode
-import asyncio
 from asgiref.sync import sync_to_async
 
 
@@ -15,8 +14,9 @@ class Bitget(CryptoMarketPlace):
         self.domain = "https://api.bitget.com"
 
 
-    def generate_headers(self, url=None, params=None):
-        api_info = BitGetAPI.objects.get(user=self.user)
+    
+    async def generate_headers(self, url=None, params=None):
+        api_info = await sync_to_async(BitGetAPI.objects.get)(user=self.user)
 
         message = self.timestamp + 'GET' + url
         
@@ -32,7 +32,7 @@ class Bitget(CryptoMarketPlace):
 
     async def get_api_data(self):
         context = {}
-
+        
         api_endpoints = await self.get_api_endpoints('bitget')
         
         for endpoint in api_endpoints:

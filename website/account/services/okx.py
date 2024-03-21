@@ -1,9 +1,8 @@
 from . import CryptoMarketPlace
-import time
 from ..models import OkxAPI
 from ..utilities import okx_signature, decode
 import datetime as dt
-import asyncio
+from asgiref.sync import sync_to_async
 
 
 
@@ -15,8 +14,8 @@ class OKX(CryptoMarketPlace):
         self.domain = 'https://www.okx.com'
     
 
-    def generate_headers(self, url=None, params=None):
-        api_info = OkxAPI.objects.get(user=self.user)
+    async def generate_headers(self, url=None, params=None):
+        api_info = await sync_to_async(OkxAPI.objects.get)(user=self.user)
 
         message = self.timestamp + 'GET' + url
 
