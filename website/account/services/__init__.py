@@ -3,6 +3,7 @@ from ..models import APIEndpoints
 from ..utilities import decode
 from asgiref.sync import sync_to_async
 import asyncio
+import aiohttp
 
 
 # yapılacaklar servis api endpointleri dbye kaydedilsin dbdn gelsin auth header required false true gelsin
@@ -27,21 +28,22 @@ class CryptoMarketPlace():
 
 
     
-    async def fetcher(self, auth_header_required=False, url=None, method=None, params=None):
+    async def fetcher(self, session, auth_header_required=False, url=None, method=None, params=None):
         if params:
             if auth_header_required:
                 headers = await self.generate_headers(params=params)
-                response = requests.request(method, self.domain + url + '?' + params, headers=headers)
             else:
-                response = requests.request(method, self.domain + url)
+                headers = None
+
+            async with session.request(method, self.domain + url + '?' + params, headers=headers) as response:
+                return await response.json()
         else:
             if auth_header_required:
                 headers = await self.generate_headers(url=url)
-                response = requests.request(method, self.domain + url, headers=headers)
             else:
-                response = requests.request(method, self.domain + url)
-        
-        return response.json()
+                headers = None
+            async with session.request(method, self.domain + url, headers=headers) as response:
+                return await response.json()
     
 
 

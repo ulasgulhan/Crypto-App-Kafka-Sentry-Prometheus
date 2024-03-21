@@ -1,3 +1,5 @@
+import asyncio
+import aiohttp
 from . import CryptoMarketPlace
 from ..models import OkxAPI
 from ..utilities import okx_signature, decode
@@ -23,7 +25,7 @@ class OKX(CryptoMarketPlace):
             'OK-ACCESS-TIMESTAMP': self.timestamp,
             'OK-ACCESS-KEY': decode(api_info.api_key),
             'OK-ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
-            'OK-ACCESS-SIGN': okx_signature(decode(api_info.secret_key), message)
+            'OK-ACCESS-SIGN': okx_signature(decode(api_info.secret_key), message).decode('utf-8')
         }
 
         return headers
@@ -31,10 +33,17 @@ class OKX(CryptoMarketPlace):
 
     async def get_api_data(self):
         context = {}
+        async with aiohttp.ClientSession() as session:
 
-        api_endpoints = await self.get_api_endpoints('okx')
+            api_endpoints = await self.get_api_endpoints('okx')
 
-        for endpoint in api_endpoints:
-            context[endpoint.endpoint_name] = await self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
+            tasks = []
+            for endpoint in api_endpoints:
+                tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
+
+            results = await asyncio.gather(*tasks)
+
+            for i, endpoint in enumerate(api_endpoints):
+                context[endpoint.endpoint_name] = results[i]
 
         return context

@@ -3,6 +3,10 @@ import time
 from ..models import BitGetAPI
 from ..utilities import generate_signature, decode
 from asgiref.sync import sync_to_async
+import aiohttp
+import asyncio
+
+
 
 
 class Bitget(CryptoMarketPlace):
@@ -32,11 +36,17 @@ class Bitget(CryptoMarketPlace):
 
     async def get_api_data(self):
         context = {}
-        
-        api_endpoints = await self.get_api_endpoints('bitget')
-        
-        for endpoint in api_endpoints:
-            context[endpoint.endpoint_name] = await self.fetcher(endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
-            
+        async with aiohttp.ClientSession() as session:
+
+            api_endpoints = await self.get_api_endpoints('bitget')
+
+            tasks = []
+            for endpoint in api_endpoints:
+                tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
+
+            results = await asyncio.gather(*tasks)
+
+            for i, endpoint in enumerate(api_endpoints):
+                context[endpoint.endpoint_name] = results[i]
 
         return context

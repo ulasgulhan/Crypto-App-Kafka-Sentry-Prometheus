@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import base64
+from asgiref.sync import sync_to_async
 
 
 def decode(data):
@@ -18,6 +19,6 @@ def bybit_signature(secret_key, message):
 
 
 def okx_signature(secret_key, message):
-    hash = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
+    hash = hmac.new(secret_key.encode('utf-8'), message.encode('utf-8'), digestmod='sha256')
     signature = hash.digest()
     return base64.b64encode(signature)

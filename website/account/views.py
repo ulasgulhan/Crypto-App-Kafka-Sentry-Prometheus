@@ -120,9 +120,8 @@ def bitget(request):
     try:
         from .services.bitget import Bitget
         api_class = Bitget(request.user)
-        print('running get api data')
+
         context = asyncio.run(api_class.get_api_data())
-        print('finish running')
 
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
@@ -138,8 +137,6 @@ def bybit(request):
         api_class = Bybit(request.user)
         context = asyncio.run(api_class.get_api_data())
 
-        print(context['bybit_info'])
-
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
         print(e)
@@ -153,6 +150,7 @@ def okx(request):
 
         api_class = OKX(request.user)
         context = asyncio.run(api_class.get_api_data())
+
         return render(request, 'sites/okx.html', context)
     except Exception as e:
         print(e)
