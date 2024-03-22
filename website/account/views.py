@@ -6,6 +6,7 @@ from .models import BitGetAPI, BybitAPI, OkxAPI
 from pprint import pprint
 import asyncio
 from asgiref.sync import sync_to_async
+from collections import defaultdict
 
 # Create your views here.
 
@@ -159,13 +160,66 @@ def okx(request):
 
 
 def get_big_data(request):
-    if request.method == 'POST':
-        form = BitGetAPIForm(request.POST)
-        if form.is_valid():
-            return render(request, 'home.html')
-    else:
-        form = BitGetAPIForm()
-    return render(request, 'access.html', {'bitget_form': form})
+    try:
+        from .services.okx import OKX
+        from .services.bitget import Bitget
+        from .services.bybit import Bybit
+
+        okx_class = OKX(request.user)
+        bitget_class = Bitget(request.user)
+        bybit_class = Bybit(request.user)
+        context = asyncio.run(okx_class.get_api_data())
+        context.update(asyncio.run(bitget_class.get_api_data()))
+        context.update(asyncio.run(bybit_class.get_api_data()))
+
+                
+        total_assets = defaultdict(lambda: {'total_amount': 0, 'available': 0, 'reserved': 0})
+
+
+        if 'bybit_account_assets_fund' in context:
+            bybit_assets = context['bybit_account_assets_fund'].get('result', {}).get('spot', {}).get('assets', [])
+            for asset in bybit_assets:
+                total_assets[asset['coin']]['total_amount'] += float(asset['free']) + float(asset['frozen'])
+                total_assets[asset['coin']]['available'] += float(asset['free'])
+                total_assets[asset['coin']]['reserved'] += float(asset['frozen'])
+
+
+        if 'okx_account_assets' in context:
+            okx_assets = context['okx_account_assets'].get('data', [])
+            for asset in okx_assets:
+                total_assets[asset['ccy']]['total_amount'] += float(asset['bal'])
+                total_assets[asset['ccy']]['available'] += float(asset['availBal'])
+                total_assets[asset['ccy']]['reserved'] += float(asset['frozenBal'])
+
+
+        if 'account_assets' in context:
+            bitget_assets = context['account_assets'].get('data', [])
+            for asset in bitget_assets:
+                total_assets[asset['coin']]['total_amount'] += float(asset['available']) + float(asset['frozen']) + float(asset['locked'])
+                total_assets[asset['coin']]['available'] += float(asset['available'])
+                total_assets[asset['coin']]['reserved'] += float(asset['frozen']) + float(asset['locked'])
+
+        context['total_assets'] = total_assets.items()
+        
+        return render(request, 'home.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'home.html')
              
-# e
+
+
+"""         coin_info_list = (context['bybit_account_assets_fund']['result']['balance'], context['account_assets']['data'], context['okx_account_assets']['data'])
+        total_prices = {}
+
+        for coin_info in coin_info_list:
+            if isinstance(coin_info, dict):
+                for coin, info in coin_info.items():
+                    if coin in total_prices:
+                        total_prices[coin] += info['price']
+                    else:
+                        total_prices[coin] = info['price']
+
+        print(total_prices)
+        for coin, total_price in total_prices.items():
+            print(f"{coin} = {total_price} USD") """
 

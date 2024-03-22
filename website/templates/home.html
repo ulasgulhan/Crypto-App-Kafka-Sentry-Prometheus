@@ -13,10 +13,6 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <th>User ID</th>
-                        <th>Authorities</th>
-                        <th>Trader Type</th>
-                        <th>Margin Coin</th>
                         <th>Account Equity</th>
                         <th>USDT Equity</th>
                         <th>BTC Equity</th>
@@ -24,13 +20,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ account.data.userId }}</td>
-                        <td> {% for auth in account.data.authorities %} {{auth}}, {% endfor %}</td>
-                        <td>{{ account.data.traderType }}</td>
-                        <td>{{ info.data.marginCoin }}</td>
-                        <td>{{ info.data.accountEquity }}</td>
-                        <td>{{ info.data.usdtEquity }}</td>
-                        <td>{{ info.data.btcEquity }}</td>
+                        <td>{{ account.data.accountEquity|add:bybit_account.result.list.0.totalEquity|add:okx_account.data.0.totalEq }}</td>
+                        <td>{{ account.data.usdtEquity|add:bybit_account.result.list.0.coin.1.equity|add:okx_account.data.0.totalEq }}</td>
+                        <td>{{ account.data.btcEquity|add:bybit_account.result.list.0.coin.0.equity|add:okx_account.data.0.totalEq }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -51,16 +43,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for asset in assets.data %}
-                        {% if asset.available >= '0' %}
+                    {% if total_assets %}
+                        {% with has_assets=False %}
+                            {% for asset in total_assets %}
+                                {% if asset.1.total_amount > 0 %}
+                                    {% with has_assets=True %}
+                                        <tr>
+                                            <td>{{ asset.0 }}</td>
+                                            <td>{{ asset.1.total_amount }}</td>
+                                            <td>{{ asset.1.available }}</td>
+                                            <td>{{ asset.1.reserved }}</td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if not has_assets %}
+                                <tr>
+                                    <td colspan="4">You have no assets in your account</td>
+                                </tr>
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
                         <tr>
-                            <td>{{ asset.coin }}</td>
-                            <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
-                            <td>{{ asset.available }}</td>
-                            <td>{{ asset.frozen|add:asset.locked }}</td>
+                            <td colspan="4">You have no assets in your account</td>
                         </tr>
-                        {% endif %}
-                    {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
 <div class="card">

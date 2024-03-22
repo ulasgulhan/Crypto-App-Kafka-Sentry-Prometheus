@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ bybit_account_assets_fund.result.memberId }}</td>
+                        <td>{{ bybit_account_id.result.memberId }}</td>
                         <td>{{ bybit_account.result.list.0.accountType }}</td>
                         <td>{{ bybit_account.result.list.0.coin.1.coin }}</td>
                         <td>{{ bybit_account.result.list.0.totalEquity }}</td>
@@ -48,13 +48,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if bybit_account_assets_fund.result.balance %}
-                        {% for asset in bybit_account_assets_fund.result.balance %}
+                    {% if bybit_account_assets_fund.result.spot.assets %}
+                        {% for asset in bybit_account_assets_fund.result.spot.assets %}
                             <tr>
                                 <td>{{ asset.coin }}</td>
-                                <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
-                                <td>{{ asset.available }}</td>
-                                <td>{{ asset.frozen|add:asset.locked }}</td>
+                                <td>{{ asset.free|add:asset.frozen }}</td>
+                                <td>{{ asset.free }}</td>
+                                <td>{{ asset.frozen}}</td>
                             </tr>
 
                         {% endfor %}

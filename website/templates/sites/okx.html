@@ -23,11 +23,17 @@
                 <tbody>
                     <tr>
                         <td>{{ okx_info.data.0.uid }}</td>
-                        <td>{{ bybit_account.result.list.0.accountType }}</td>
-                        <td>{{ bybit_account.result.list.0.coin.1.coin }}</td>
-                        <td>{{ bybit_account.result.list.0.totalEquity }}</td>
-                        <td>{{ bybit_account.result.list.0.coin.1.equity }}</td>
-                        <td>{{ bybit_account.result.list.0.coin.0.equity }}</td>
+                        <td>{{ okx_info.data.0.level }}</td>
+                        <td>USDT</td>
+                        {% if okx_account.data.0.details %}
+                            <td>{{ bybit_account.result.list.0.totalEquity }}</td>
+                            <td>{{ okx_account.data.0.totalEq }}</td>
+                            <td>{{ bybit_account.result.list.0.coin.0.equity }}</td>
+                        {% else %}
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        {% endif %}
                     </tr>
                 </tbody>
             </table>
@@ -48,13 +54,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if bybit_account_assets_fund.result.balance %}
-                        {% for asset in bybit_account_assets_fund.result.balance %}
+                    {% if okx_account_assets.data %}
+                        {% for asset in okx_account_assets.data %}
                             <tr>
-                                <td>{{ asset.coin }}</td>
-                                <td>{{ asset.available|add:asset.frozen|add:asset.locked }}</td>
-                                <td>{{ asset.available }}</td>
-                                <td>{{ asset.frozen|add:asset.locked }}</td>
+                                <td>{{ asset.ccy }}</td>
+                                <td>{{ asset.bal }}</td>
+                                <td>{{ asset.availBal }}</td>
+                                <td>{{ asset.frozenBal }}</td>
                             </tr>
 
                         {% endfor %}
