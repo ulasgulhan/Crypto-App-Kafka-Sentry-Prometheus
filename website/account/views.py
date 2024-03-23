@@ -1,12 +1,12 @@
-from django.db import DatabaseError
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
-from .models import BitGetAPI, BybitAPI, OkxAPI
-from pprint import pprint
+from .models import BitGetAPI, BybitAPI, CryptoMarketAPICredentials, OkxAPI
 import asyncio
-from asgiref.sync import sync_to_async
 from collections import defaultdict
+from .services.okx import OKX
+from .services.bitget import Bitget
+from .services.bybit import Bybit
 
 # Create your views here.
 
@@ -159,11 +159,64 @@ def okx(request):
 
 
 
+
+def get_crypto_markets_by_user(request):
+    crypto_markets = {
+        "okx": OKX(request.user),
+        "bitget": Bitget(request.user),
+        "bybit": Bybit(request.user)
+    }
+
+    datas = CryptoMarketAPICredentials.objects.get(user=request.user)
+
+    for data in datas:
+        if data.cryptomarket.slug not in crypto_markets.keys():
+            crypto_markets.delete(data)
+    
+    return crypto_markets
+
+
+
+
+def get_api_data_of_markets(crypto_markets):
+    context = {}
+
+    for market_class in crypto_markets.values():
+        context.update(asyncio.run(market_class.get_api_data())) 
+    
+
+       
+
+"""
+tokencı
+
+
+access_token
+pharase yoksa default none
+secret key
+crypto_market_id foreign key ile crypto markete bağlı
+
+"""
+
+
+"""
+crypto markets
+
+name
+id
+"""
+
+"""
+endpoints
+crypto markets foreign key
+
+"""
+
+
+
+
 def get_big_data(request):
     try:
-        from .services.okx import OKX
-        from .services.bitget import Bitget
-        from .services.bybit import Bybit
 
         okx_class = OKX(request.user)
         bitget_class = Bitget(request.user)
@@ -207,19 +260,4 @@ def get_big_data(request):
         return render(request, 'home.html')
              
 
-
-"""         coin_info_list = (context['bybit_account_assets_fund']['result']['balance'], context['account_assets']['data'], context['okx_account_assets']['data'])
-        total_prices = {}
-
-        for coin_info in coin_info_list:
-            if isinstance(coin_info, dict):
-                for coin, info in coin_info.items():
-                    if coin in total_prices:
-                        total_prices[coin] += info['price']
-                    else:
-                        total_prices[coin] = info['price']
-
-        print(total_prices)
-        for coin, total_price in total_prices.items():
-            print(f"{coin} = {total_price} USD") """
 
