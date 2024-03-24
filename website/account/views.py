@@ -164,72 +164,12 @@ def okx(request):
         return render(request, 'sites/okx.html')
 
 
-
-
-""" def get_crypto_markets_by_user(request):
-    crypto_markets = {
-        "okx": OKX(request.user),
-        "bitget": Bitget(request.user),
-        "bybit": Bybit(request.user)
-    }
-
-    datas = CryptoMarketAPICredentials.objects.get(user=request.user)
-
-    for data in datas:
-        if data.cryptomarket.slug not in crypto_markets.keys():
-            crypto_markets.delete(data)
-    
-    return crypto_markets
-
-
-
-
-def get_api_data_of_markets(crypto_markets):
-    context = {}
-
-    for market_class in crypto_markets.values():
-        context.update(asyncio.run(market_class.get_api_data())) 
-     """
-
-
 def get_big_data(request):
     try:
+        from .services.all_api_data import AllData
 
-        okx_class = OKX(request.user)
-        bitget_class = Bitget(request.user)
-        bybit_class = Bybit(request.user)
-        context = asyncio.run(okx_class.get_api_data())
-        context.update(asyncio.run(bitget_class.get_api_data()))
-        context.update(asyncio.run(bybit_class.get_api_data()))
-
-                
-        total_assets = defaultdict(lambda: {'total_amount': 0, 'available': 0, 'reserved': 0})
-
-
-        if 'bybit_account_assets_fund' in context:
-            bybit_assets = context['bybit_account_assets_fund'].get('result', {}).get('spot', {}).get('assets', [])
-            for asset in bybit_assets:
-                total_assets[asset['coin']]['total_amount'] += float(asset['free']) + float(asset['frozen'])
-                total_assets[asset['coin']]['available'] += float(asset['free'])
-                total_assets[asset['coin']]['reserved'] += float(asset['frozen'])
-
-
-        if 'okx_account_assets' in context:
-            okx_assets = context['okx_account_assets'].get('data', [])
-            for asset in okx_assets:
-                total_assets[asset['ccy']]['total_amount'] += float(asset['bal'])
-                total_assets[asset['ccy']]['available'] += float(asset['availBal'])
-                total_assets[asset['ccy']]['reserved'] += float(asset['frozenBal'])
-
-
-        if 'account_assets' in context:
-            bitget_assets = context['account_assets'].get('data', [])
-            for asset in bitget_assets:
-                total_assets[asset['coin']]['total_amount'] += float(asset['available']) + float(asset['frozen']) + float(asset['locked'])
-                total_assets[asset['coin']]['available'] += float(asset['available'])
-                total_assets[asset['coin']]['reserved'] += float(asset['frozen']) + float(asset['locked'])
-
-        context['total_assets'] = total_assets.items()
+        api_class = AllData()
+        context = api_class.get_all_data(request)
         
         return render(request, 'home.html', context)
     except Exception as e:

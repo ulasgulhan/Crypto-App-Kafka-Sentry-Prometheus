@@ -4,6 +4,7 @@ import base64
 from asgiref.sync import sync_to_async
 
 
+
 def decode(data):
     return  base64.b64decode(data).decode()
 
@@ -22,3 +23,6 @@ def okx_signature(secret_key, message):
     hash = hmac.new(secret_key.encode('utf-8'), message.encode('utf-8'), digestmod='sha256')
     signature = hash.digest()
     return base64.b64encode(signature)
+
+
+
