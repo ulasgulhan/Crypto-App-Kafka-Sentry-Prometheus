@@ -1,5 +1,5 @@
 import requests
-from ..models import APIEndpoints
+from ..models import APIEndpoints, CryptoMarketAPICredentials
 from ..utilities import decode
 from asgiref.sync import sync_to_async
 import asyncio
@@ -13,7 +13,7 @@ import aiohttp
 class CryptoMarketPlace():
     def __init__(self):
         self.timestamp = None
-        self.db_model = None
+        self.db_model = CryptoMarketAPICredentials
         self.domain = None
         self.api_model = APIEndpoints
         
@@ -23,8 +23,8 @@ class CryptoMarketPlace():
     
 
     @sync_to_async
-    def get_api_endpoints(self, website):
-        return list(APIEndpoints.objects.filter(api_site_name=website))
+    def get_api_endpoints(self, crypto_market):
+        return list(APIEndpoints.objects.filter(crypto_market=crypto_market))
 
 
     

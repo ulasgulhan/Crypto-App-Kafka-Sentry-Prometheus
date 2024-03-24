@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from account.forms import BitGetAPIForm, ByBitAPIForm, OkxAPIFrom
-from .models import BitGetAPI, BybitAPI, CryptoMarketAPICredentials, OkxAPI
+from account.forms import PassphraseForm, NonePassphraseForm
+from .models import CryptoMarketAPICredentials, CryptoMarkets
 import asyncio
 from collections import defaultdict
 from .services.okx import OKX
@@ -18,9 +18,9 @@ def profile(request):
     bitget_connected = False
     okx_connected = False
 
-    bitget_api_info = BitGetAPI.objects.filter(user=request.user)
-    bybit_api_info = BybitAPI.objects.filter(user=request.user)
-    okx_api_info = OkxAPI.objects.filter(user=request.user)
+    bitget_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
+    bybit_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
+    okx_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
 
     if bitget_api_info:
         bitget_connected = True
@@ -44,46 +44,52 @@ def profile(request):
 
 @login_required
 def bitget_access(request):
+    crypto_market_class = CryptoMarkets.objects.get(id=1)
     if request.method == 'POST':
-        form = BitGetAPIForm(request.POST)
+        form = PassphraseForm(request.POST)
         if form.is_valid():
             api = form.save(commit=False)
             api.user = request.user
+            api.crypto_market = crypto_market_class
             api.api_key = form.cleaned_data['access_key']
             api.save()
             return redirect('all_data')
     else:
-        form = BitGetAPIForm()
+        form = PassphraseForm()
     return render(request, 'access.html', {'bitget_form': form})
 
 
 @login_required
 def bybit_access(request):
+    crypto_market_class = CryptoMarkets.objects.get(id=2)
     if request.method == 'POST':
-        form = ByBitAPIForm(request.POST)
+        form = NonePassphraseForm(request.POST)
         if form.is_valid():
             api = form.save(commit=False)
             api.user = request.user
+            api.crypto_market = crypto_market_class
             api.api_key = form.cleaned_data['access_key']
             api.save()
             return redirect('all_data')
     else:
-        form = ByBitAPIForm()
+        form = NonePassphraseForm()
     return render(request, 'access.html', {'bybit_form': form})
 
 
 @login_required
 def okx_access(request):
+    crypto_market_class = CryptoMarkets.objects.get(id=3)
     if request.method == 'POST':
-        form = OkxAPIFrom(request.POST)
+        form = PassphraseForm(request.POST)
         if form.is_valid():
             api = form.save(commit=False)
             api.user = request.user
+            api.crypto_market = crypto_market_class
             api.api_key = form.cleaned_data['access_key']
             api.save()
             return redirect('all_data')
     else:
-        form = OkxAPIFrom()
+        form = PassphraseForm()
     return render(request, 'access.html', {'bybit_form': form})
 
 # endregion
@@ -93,21 +99,21 @@ def okx_access(request):
 
 @login_required
 def delete_bitget_api(request):
-    api_info = BitGetAPI.objects.filter(user=request.user)
+    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
     api_info.delete()
     return redirect('profile')
 
 
 @login_required
 def delete_bybit_api(request):
-    api_info = BybitAPI.objects.filter(user=request.user)
+    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
     api_info.delete()
     return redirect('profile')
 
 
 @login_required
 def delete_okx_api(request):
-    api_info = OkxAPI.objects.filter(user=request.user)
+    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
     api_info.delete()
     return redirect('profile')
 
@@ -160,7 +166,7 @@ def okx(request):
 
 
 
-def get_crypto_markets_by_user(request):
+""" def get_crypto_markets_by_user(request):
     crypto_markets = {
         "okx": OKX(request.user),
         "bitget": Bitget(request.user),
@@ -183,36 +189,7 @@ def get_api_data_of_markets(crypto_markets):
 
     for market_class in crypto_markets.values():
         context.update(asyncio.run(market_class.get_api_data())) 
-    
-
-       
-
-"""
-tokencı
-
-
-access_token
-pharase yoksa default none
-secret key
-crypto_market_id foreign key ile crypto markete bağlı
-
-"""
-
-
-"""
-crypto markets
-
-name
-id
-"""
-
-"""
-endpoints
-crypto markets foreign key
-
-"""
-
-
+     """
 
 
 def get_big_data(request):

@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 from . import CryptoMarketPlace
-from ..models import OkxAPI
+from ..models import CryptoMarketAPICredentials
 from ..utilities import okx_signature, decode
 import datetime as dt
 from asgiref.sync import sync_to_async
@@ -12,12 +12,12 @@ class OKX(CryptoMarketPlace):
     def __init__(self, user):
         self.timestamp = dt.datetime.utcnow().isoformat()[:-3]+'Z'
         self.user = user
-        self.db_model = OkxAPI
+        self.db_model = CryptoMarketAPICredentials
         self.domain = 'https://www.okx.com'
     
 
     async def generate_headers(self, url=None, params=None):
-        api_info = await sync_to_async(OkxAPI.objects.get)(user=self.user)
+        api_info = await sync_to_async(CryptoMarketAPICredentials.objects.get)(user=self.user, crypto_market=3)
 
         message = self.timestamp + 'GET' + url
 
@@ -35,7 +35,7 @@ class OKX(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
 
-            api_endpoints = await self.get_api_endpoints('okx')
+            api_endpoints = await self.get_api_endpoints(3)
 
             tasks = []
             for endpoint in api_endpoints:

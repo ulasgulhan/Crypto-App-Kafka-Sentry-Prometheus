@@ -1,6 +1,6 @@
 from . import CryptoMarketPlace
 import time
-from ..models import BitGetAPI
+from ..models import CryptoMarketAPICredentials
 from ..utilities import generate_signature, decode
 from asgiref.sync import sync_to_async
 import aiohttp
@@ -14,13 +14,13 @@ class Bitget(CryptoMarketPlace):
     def __init__(self, user):
         self.timestamp = str(int(time.time_ns() / 1000000))
         self.user = user
-        self.db_model = BitGetAPI
+        self.db_model = CryptoMarketAPICredentials
         self.domain = "https://api.bitget.com"
 
 
     
     async def generate_headers(self, url=None, params=None):
-        api_info = await sync_to_async(BitGetAPI.objects.get)(user=self.user)
+        api_info = await sync_to_async(CryptoMarketAPICredentials.objects.get)(user=self.user, crypto_market=1)
 
         message = self.timestamp + 'GET' + url
         
@@ -38,7 +38,7 @@ class Bitget(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
 
-            api_endpoints = await self.get_api_endpoints('bitget')
+            api_endpoints = await self.get_api_endpoints(1)
 
             tasks = []
             for endpoint in api_endpoints:
