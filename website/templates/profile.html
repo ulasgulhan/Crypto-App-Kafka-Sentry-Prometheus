@@ -105,9 +105,21 @@
                     </tr>
                     {% for market in crypto_markets %}
                       <tr>
+                        {% if market.slug in connection %}
+                        <td>
+                          {{ market.name }} API Connected
+                        </td>
+                        <td>
+                          <a href="{% url "delete_test" market.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Delete Your Api Key</a>
+                        </td>
+                        {% else %}
+                        <td>
+                          {{ market.name }} is Not Connected
+                        </td>
                         <td>
                           <a href="{% url "test" market.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Connect {{ market.name }}</a>
                         </td>
+                        {% endif %}
                       </tr>
                     {% endfor %}
                   </tbody>

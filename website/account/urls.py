@@ -14,6 +14,7 @@ urlpatterns = [
     path('bitget/delete', views.delete_bitget_api, name='delete_bitget'),
     path('bybit/delete', views.delete_bybit_api, name='delete_bybit'),
     path('okx/delete', views.delete_okx_api, name='delete_okx'),
+    path('dtest/<int:market_id>', views.delete_test, name='delete_test'),
 
     path('bitget/access', views.bitget_access, name='bitget_access'),
     path('bybit/access', views.bybit_access, name='bybit_access'),

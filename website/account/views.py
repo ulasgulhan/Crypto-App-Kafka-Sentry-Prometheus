@@ -14,11 +14,15 @@ from .services.bybit import Bybit
 @login_required(login_url='/login')
 def profile(request):
     user = request.user
+    api_connection = {}
     bybit_connected = False
     bitget_connected = False
     okx_connected = False
 
     crypto_markets = CryptoMarkets.objects.filter(is_active=True)
+    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user)
+
+
 
     bitget_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
     bybit_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
@@ -40,6 +44,15 @@ def profile(request):
         'okx_connected': okx_connected,
         'crypto_markets': crypto_markets,
     }
+    
+    for api in api_info:
+        api_connection[api.crypto_market.slug] = True
+    
+
+    print(api_connection)
+    context['connection'] = api_connection
+    
+    
     return render(request, 'profile.html', context)
 
 
@@ -123,6 +136,13 @@ def okx_access(request):
 
 
 # region Delete
+
+@login_required(login_url='/login')
+def delete_test(request, market_id):
+    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=market_id)
+    api_info.delete()
+    return redirect('profile')
+
 
 @login_required(login_url='/login')
 def delete_bitget_api(request):
