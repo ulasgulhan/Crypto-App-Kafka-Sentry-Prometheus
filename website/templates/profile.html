@@ -103,6 +103,13 @@
                         <a href="{% url "okx_access" %}" class="btn btn-md btn-success float-end me-2 ms-2">Connect Okx</a>
                         {% endif %}</td>
                     </tr>
+                    {% for market in crypto_markets %}
+                      <tr>
+                        <td>
+                          <a href="{% url "test" market.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Connect {{ market.name }}</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>

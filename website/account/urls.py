@@ -18,5 +18,6 @@ urlpatterns = [
     path('bitget/access', views.bitget_access, name='bitget_access'),
     path('bybit/access', views.bybit_access, name='bybit_access'),
     path('okx/access', views.okx_access, name='okx_access'),
+    path('test/<int:market_id>', views.test, name='test'),
     
 ]

@@ -18,6 +18,8 @@ def profile(request):
     bitget_connected = False
     okx_connected = False
 
+    crypto_markets = CryptoMarkets.objects.filter(is_active=True)
+
     bitget_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
     bybit_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
     okx_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
@@ -36,11 +38,36 @@ def profile(request):
         'bitget_connected': bitget_connected,
         'bybit_connected': bybit_connected,
         'okx_connected': okx_connected,
+        'crypto_markets': crypto_markets,
     }
     return render(request, 'profile.html', context)
 
 
 # region Access
+
+
+@login_required(login_url='/login')
+def test(request, market_id):
+    crypto_market_class = CryptoMarkets.objects.get(id=market_id)
+    if market_id == 2:
+        if request.method == 'POST':
+            form = NonePassphraseForm(request.POST)
+        else:
+            form = NonePassphraseForm()
+    else:
+        if request.method == 'POST':
+            form = PassphraseForm(request.POST)
+        else:
+            form = PassphraseForm()
+    if form.is_valid():
+        api = form.save(commit=False)
+        api.user = request.user
+        api.crypto_market = crypto_market_class
+        api.api_key = form.cleaned_data['access_key']
+        api.save()
+        return redirect('all_data')
+    return render(request, 'test.html', {'form': form})
+
 
 @login_required(login_url='/login')
 def bitget_access(request):
