@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth.models import User
 import base64
@@ -13,6 +14,7 @@ METHODS_CHOICES = [
 class CryptoMarkets(models.Model):
     name            = models.CharField(max_length=200)
     slug            = models.SlugField(max_length=200, unique=True)
+    is_active       = models.BooleanField(default=True)
 
 
 class APIEndpoints(models.Model):
@@ -22,6 +24,7 @@ class APIEndpoints(models.Model):
     auth_required   = models.BooleanField()
     method          = models.CharField(max_length=200, choices=METHODS_CHOICES)
     crypto_market   = models.ForeignKey(CryptoMarkets, on_delete=models.CASCADE)
+    is_active       = models.BooleanField(default=True)
 
 
 class CryptoMarketAPICredentials(models.Model):
