@@ -1,5 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 
 def landing(request):
-    return render(request, 'landing.html')
+    if request.user.is_authenticated:
+        return redirect('all_data')
+    else:
+        return render(request, 'landing.html')

@@ -11,7 +11,7 @@ from .services.bybit import Bybit
 # Create your views here.
 
 
-@login_required
+@login_required(login_url='/login')
 def profile(request):
     user = request.user
     bybit_connected = False
@@ -42,7 +42,7 @@ def profile(request):
 
 # region Access
 
-@login_required
+@login_required(login_url='/login')
 def bitget_access(request):
     crypto_market_class = CryptoMarkets.objects.get(id=1)
     if request.method == 'POST':
@@ -59,7 +59,7 @@ def bitget_access(request):
     return render(request, 'access.html', {'bitget_form': form})
 
 
-@login_required
+@login_required(login_url='/login')
 def bybit_access(request):
     crypto_market_class = CryptoMarkets.objects.get(id=2)
     if request.method == 'POST':
@@ -76,7 +76,7 @@ def bybit_access(request):
     return render(request, 'access.html', {'bybit_form': form})
 
 
-@login_required
+@login_required(login_url='/login')
 def okx_access(request):
     crypto_market_class = CryptoMarkets.objects.get(id=3)
     if request.method == 'POST':
@@ -97,21 +97,21 @@ def okx_access(request):
 
 # region Delete
 
-@login_required
+@login_required(login_url='/login')
 def delete_bitget_api(request):
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
     api_info.delete()
     return redirect('profile')
 
 
-@login_required
+@login_required(login_url='/login')
 def delete_bybit_api(request):
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
     api_info.delete()
     return redirect('profile')
 
 
-@login_required
+@login_required(login_url='/login')
 def delete_okx_api(request):
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
     api_info.delete()
@@ -122,7 +122,7 @@ def delete_okx_api(request):
 
 # region Crypto Sites
 
-@login_required
+@login_required(login_url='/login')
 def bitget(request):
     try:
         from .services.bitget import Bitget
@@ -136,7 +136,7 @@ def bitget(request):
         return render(request, 'sites/bitget.html')
 
 
-@login_required
+@login_required(login_url='/login')
 def bybit(request):
     try:
         from .services.bybit import Bybit
@@ -150,7 +150,7 @@ def bybit(request):
         return render(request, 'sites/bybit.html')
 
 
-@login_required
+@login_required(login_url='/login')
 def okx(request):
     try:
         from .services.okx import OKX
@@ -164,6 +164,7 @@ def okx(request):
         return render(request, 'sites/okx.html')
 
 
+@login_required(login_url='/login')
 def get_big_data(request):
     try:
         from .services.all_api_data import AllData
