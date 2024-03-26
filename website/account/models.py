@@ -15,6 +15,13 @@ class CryptoMarkets(models.Model):
     slug            = models.SlugField(max_length=200, unique=True)
     is_active       = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = 'Crypto Market'
+        verbose_name_plural = 'Crypto Markets'
+
+    def __str__(self) -> str:
+        return self.name
+
 
 class APIEndpoints(models.Model):
     endpoint_name   = models.CharField(max_length=200)
@@ -25,6 +32,10 @@ class APIEndpoints(models.Model):
     crypto_market   = models.ForeignKey(CryptoMarkets, on_delete=models.CASCADE)
     is_active       = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = 'API Endpoint'
+        verbose_name_plural = 'API Endpoints'
+
 
 class CryptoMarketAPICredentials(models.Model):
     api_key             = models.CharField(max_length=200)
@@ -32,6 +43,10 @@ class CryptoMarketAPICredentials(models.Model):
     access_passphrase   = models.CharField(max_length=200, default=None, blank=True, null=True)
     user                = models.ForeignKey(User, on_delete=models.CASCADE)
     crypto_market       = models.ForeignKey(CryptoMarkets, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Crypto Market API Credantial'
+        verbose_name_plural = 'Crypto Market API Credantials'
 
     def encode(self, value):
         return base64.b64encode(value.encode()).decode()
