@@ -1,7 +1,6 @@
 import asyncio
 import aiohttp
 from . import CryptoMarketPlace
-from ..models import CryptoMarketAPICredentials
 from ..utilities import bybit_signature, decode
 from asgiref.sync import sync_to_async
 from pybit.unified_trading import HTTP
@@ -9,16 +8,15 @@ from pybit.unified_trading import HTTP
 
 class Bybit(CryptoMarketPlace):
     def __init__(self, user):
-        self.timestamp = None
+        super().__init__()
         self.user = user
-        self.db_model = CryptoMarketAPICredentials
         self.domain = 'https://api.bybit.com'
         self.session = HTTP(testnet=True)
     
 
     
     async def generate_headers(self, url=None, params=''):
-        api_info = await sync_to_async(CryptoMarketAPICredentials.objects.get)(user=self.user, crypto_market=2)
+        api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
         api_key = decode(api_info.api_key)
         time = self.session.get_server_time()
         message = str(time['time']) + api_key + str(5000) + params
