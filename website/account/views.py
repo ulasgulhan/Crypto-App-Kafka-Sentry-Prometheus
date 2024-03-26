@@ -3,10 +3,6 @@ from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets
 import asyncio
-from collections import defaultdict
-from .services.okx import OKX
-from .services.bitget import Bitget
-from .services.bybit import Bybit
 
 # Create your views here.
 
@@ -15,43 +11,20 @@ from .services.bybit import Bybit
 def profile(request):
     user = request.user
     api_connection = {}
-    bybit_connected = False
-    bitget_connected = False
-    okx_connected = False
 
     crypto_markets = CryptoMarkets.objects.filter(is_active=True)
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user)
 
 
-
-    bitget_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
-    bybit_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
-    okx_api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
-
-    if bitget_api_info:
-        bitget_connected = True
-    
-    if bybit_api_info:
-        bybit_connected = True
-    
-    if okx_api_info:
-        okx_connected = True
-
     context = {
         'user': user,
-        'bitget_connected': bitget_connected,
-        'bybit_connected': bybit_connected,
-        'okx_connected': okx_connected,
         'crypto_markets': crypto_markets,
     }
     
     for api in api_info:
         api_connection[api.crypto_market.slug] = True
     
-
-    print(api_connection)
     context['connection'] = api_connection
-    
     
     return render(request, 'profile.html', context)
 
@@ -60,7 +33,7 @@ def profile(request):
 
 
 @login_required(login_url='/login')
-def test(request, market_id):
+def access(request, market_id):
     crypto_market_class = CryptoMarkets.objects.get(id=market_id)
     if market_id == 2:
         if request.method == 'POST':
@@ -79,58 +52,7 @@ def test(request, market_id):
         api.api_key = form.cleaned_data['access_key']
         api.save()
         return redirect('all_data')
-    return render(request, 'test.html', {'form': form})
-
-
-@login_required(login_url='/login')
-def bitget_access(request):
-    crypto_market_class = CryptoMarkets.objects.get(id=1)
-    if request.method == 'POST':
-        form = PassphraseForm(request.POST)
-        if form.is_valid():
-            api = form.save(commit=False)
-            api.user = request.user
-            api.crypto_market = crypto_market_class
-            api.api_key = form.cleaned_data['access_key']
-            api.save()
-            return redirect('all_data')
-    else:
-        form = PassphraseForm()
-    return render(request, 'access.html', {'bitget_form': form})
-
-
-@login_required(login_url='/login')
-def bybit_access(request):
-    crypto_market_class = CryptoMarkets.objects.get(id=2)
-    if request.method == 'POST':
-        form = NonePassphraseForm(request.POST)
-        if form.is_valid():
-            api = form.save(commit=False)
-            api.user = request.user
-            api.crypto_market = crypto_market_class
-            api.api_key = form.cleaned_data['access_key']
-            api.save()
-            return redirect('all_data')
-    else:
-        form = NonePassphraseForm()
-    return render(request, 'access.html', {'bybit_form': form})
-
-
-@login_required(login_url='/login')
-def okx_access(request):
-    crypto_market_class = CryptoMarkets.objects.get(id=3)
-    if request.method == 'POST':
-        form = PassphraseForm(request.POST)
-        if form.is_valid():
-            api = form.save(commit=False)
-            api.user = request.user
-            api.crypto_market = crypto_market_class
-            api.api_key = form.cleaned_data['access_key']
-            api.save()
-            return redirect('all_data')
-    else:
-        form = PassphraseForm()
-    return render(request, 'access.html', {'bybit_form': form})
+    return render(request, 'access.html', {'form': form})
 
 # endregion
 
@@ -138,29 +60,8 @@ def okx_access(request):
 # region Delete
 
 @login_required(login_url='/login')
-def delete_test(request, market_id):
+def delete(request, market_id):
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=market_id)
-    api_info.delete()
-    return redirect('profile')
-
-
-@login_required(login_url='/login')
-def delete_bitget_api(request):
-    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=1)
-    api_info.delete()
-    return redirect('profile')
-
-
-@login_required(login_url='/login')
-def delete_bybit_api(request):
-    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=2)
-    api_info.delete()
-    return redirect('profile')
-
-
-@login_required(login_url='/login')
-def delete_okx_api(request):
-    api_info = CryptoMarketAPICredentials.objects.filter(user=request.user, crypto_market=3)
     api_info.delete()
     return redirect('profile')
 

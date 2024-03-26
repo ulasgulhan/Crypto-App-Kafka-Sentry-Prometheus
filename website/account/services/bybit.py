@@ -1,7 +1,6 @@
 import asyncio
 import aiohttp
 from . import CryptoMarketPlace
-import time
 from ..models import CryptoMarketAPICredentials
 from ..utilities import bybit_signature, decode
 from asgiref.sync import sync_to_async

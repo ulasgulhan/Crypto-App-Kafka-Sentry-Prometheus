@@ -1,9 +1,6 @@
-import requests
 from ..models import APIEndpoints, CryptoMarketAPICredentials
-from ..utilities import decode
 from asgiref.sync import sync_to_async
-import asyncio
-import aiohttp
+
 
 
 # yapılacaklar servis api endpointleri dbye kaydedilsin dbdn gelsin auth header required false true gelsin
