@@ -8,7 +8,8 @@ from .models import APIEndpoints, CryptoMarketAPICredentials, CryptoMarkets
 
 
 class APIEndpointsAdmin(admin.ModelAdmin):
-    list_display    = ('endpoint_name', 'method')
+    list_display    = ('endpoint_name', 'method', 'auth_required', 'crypto_market', 'is_active')
+    list_editable   = ('is_active',)
 
 
 class CryptoMarketAPICredentialsAdmin(admin.ModelAdmin):
