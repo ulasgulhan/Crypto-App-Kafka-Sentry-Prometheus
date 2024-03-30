@@ -1,5 +1,6 @@
 from ..models import APIEndpoints, CryptoMarketAPICredentials
 from asgiref.sync import sync_to_async
+import json
 
 
 
@@ -27,13 +28,19 @@ class CryptoMarketPlace():
     
     async def fetcher(self, session, auth_header_required=False, url=None, method=None, params=None):
         if params:
-            if auth_header_required:
+            if auth_header_required and url == '/api/v2/mix/order/place-order':
+                headers = await self.generate_headers(url=url, params=params)
+            elif auth_header_required:
                 headers = await self.generate_headers(params=params)
             else:
                 headers = None
-
-            async with session.request(method, self.domain + url + '?' + params, headers=headers) as response:
-                return await response.json()
+            
+            if url == '/api/v2/mix/order/place-order':
+                async with session.request(method, self.domain + url, headers=headers, json=params) as response:
+                    return await response.json()
+            else:
+                async with session.request(method, self.domain + url + '?' + params, headers=headers) as response:
+                    return await response.json()
         else:
             if auth_header_required:
                 headers = await self.generate_headers(url=url)

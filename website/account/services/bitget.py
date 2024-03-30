@@ -21,13 +21,20 @@ class Bitget(CryptoMarketPlace):
     async def generate_headers(self, url=None, params=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=1)
 
-        message = self.timestamp + 'GET' + url
-        
+
+        if url == '/api/v2/mix/order/place-order':
+            message = self.timestamp + 'POST' + '/api/v2/mix/order/place-order' + str(params)
+            print(message)
+        else:
+            message = self.timestamp + 'GET' + url
+
+
         headers = {
             'ACCESS-TIMESTAMP': self.timestamp,
             'ACCESS-KEY': decode(api_info.api_key),
             'ACCESS-PASSPHRASE': decode(api_info.access_passphrase),
-            'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message)
+            'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message),
+            'Content-Type': 'application/json'
         }
 
         return headers
@@ -39,9 +46,27 @@ class Bitget(CryptoMarketPlace):
 
             api_endpoints = await self.get_api_endpoints(1)
 
+            params = {
+                "symbol": "ETHUSDT",
+                "productType": "SUSDT-FUTURES",
+                "marginMode": "isolated",
+                "marginCoin": "USDT",
+                "size": "0.1",
+                "price": "2000",
+                "side": "sell",
+                "tradeSide": "open",
+                "orderType": "limit",
+                "force": "gtc",
+                "clientOid": "121211212122"
+            }
+
             tasks = []
             for endpoint in api_endpoints:
-                tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
+                if endpoint.endpoint_url == '/api/v2/mix/order/place-order':
+                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
+                else:
+                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
+
 
             results = await asyncio.gather(*tasks)
 
