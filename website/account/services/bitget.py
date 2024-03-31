@@ -4,6 +4,7 @@ from ..utilities import generate_signature, decode
 from asgiref.sync import sync_to_async
 import aiohttp
 import asyncio
+import json
 
 
 
@@ -18,15 +19,14 @@ class Bitget(CryptoMarketPlace):
 
 
     
-    async def generate_headers(self, url=None, params=None):
+    async def generate_headers(self, url=None, params=None, method=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=1)
 
-
-        if url == '/api/v2/mix/order/place-order':
-            message = self.timestamp + 'POST' + '/api/v2/mix/order/place-order' + str(params)
-            print(message)
+        if method == 'POST':
+            body = json.dumps(params)
+            message = self.timestamp + method + url + str(body)
         else:
-            message = self.timestamp + 'GET' + url
+            message = self.timestamp + method + url
 
 
         headers = {
@@ -36,6 +36,7 @@ class Bitget(CryptoMarketPlace):
             'ACCESS-SIGN': generate_signature(decode(api_info.secret_key), message),
             'Content-Type': 'application/json'
         }
+
 
         return headers
     
@@ -47,22 +48,19 @@ class Bitget(CryptoMarketPlace):
             api_endpoints = await self.get_api_endpoints(1)
 
             params = {
-                "symbol": "ETHUSDT",
+                "symbol": "SBTCSUSDT",
                 "productType": "SUSDT-FUTURES",
                 "marginMode": "isolated",
-                "marginCoin": "USDT",
-                "size": "0.1",
-                "price": "2000",
-                "side": "sell",
-                "tradeSide": "open",
-                "orderType": "limit",
-                "force": "gtc",
-                "clientOid": "121211212122"
+                "marginCoin": "SUSDT",
+                "size": "0",
+                "price": "0",
+                "side": "buy",
+                "orderType": "market",
             }
 
             tasks = []
             for endpoint in api_endpoints:
-                if endpoint.endpoint_url == '/api/v2/mix/order/place-order':
+                if endpoint.method == 'POST':
                     tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
                 else:
                     tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))

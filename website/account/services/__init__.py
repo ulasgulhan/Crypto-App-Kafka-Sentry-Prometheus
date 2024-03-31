@@ -16,7 +16,7 @@ class CryptoMarketPlace():
         self.api_model = APIEndpoints
         
 
-    def generate_headers(self, url=None, params=None):
+    def generate_headers(self, url=None, params=None, method=None):
         return None
     
 
@@ -28,8 +28,8 @@ class CryptoMarketPlace():
     
     async def fetcher(self, session, auth_header_required=False, url=None, method=None, params=None):
         if params:
-            if auth_header_required and url == '/api/v2/mix/order/place-order':
-                headers = await self.generate_headers(url=url, params=params)
+            if auth_header_required and method == 'POST':
+                headers = await self.generate_headers(url=url, params=params, method=method)
             elif auth_header_required:
                 headers = await self.generate_headers(params=params)
             else:

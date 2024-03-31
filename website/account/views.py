@@ -78,7 +78,7 @@ def bitget(request):
 
         context = asyncio.run(api_class.get_api_data())
 
-        # print(context['bitget_demo_coin'])
+        print(context['bitget_demo_coin'])
         print(context['bitget_future_demo_trade'])
 
         return render(request, 'sites/bitget.html', context)
