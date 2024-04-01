@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
@@ -78,9 +79,6 @@ def bitget(request):
 
         context = asyncio.run(api_class.get_api_data())
 
-        print(context['bitget_demo_coin'])
-        print(context['bitget_future_demo_trade'])
-
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         print(e)
@@ -127,6 +125,16 @@ def get_big_data(request):
     except Exception as e:
         print(e)
         return render(request, 'home.html')
+
+
+@login_required(login_url='/login')
+def coin_detail(request, symbol):
+
+    context = {
+        'symbol': symbol
+    }
+
+    return render(request, 'coin.html', context)
              
 
 

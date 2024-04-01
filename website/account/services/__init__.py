@@ -31,7 +31,7 @@ class CryptoMarketPlace():
             if auth_header_required and method == 'POST':
                 headers = await self.generate_headers(url=url, params=params, method=method)
             elif auth_header_required:
-                headers = await self.generate_headers(params=params)
+                headers = await self.generate_headers(params=params, method=method)
             else:
                 headers = None
             
@@ -43,7 +43,7 @@ class CryptoMarketPlace():
                     return await response.json()
         else:
             if auth_header_required:
-                headers = await self.generate_headers(url=url)
+                headers = await self.generate_headers(url=url, method=method)
             else:
                 headers = None
             async with session.request(method, self.domain + url, headers=headers) as response:

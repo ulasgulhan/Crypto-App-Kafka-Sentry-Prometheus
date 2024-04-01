@@ -1,4 +1,4 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 {% block title %} {{ user.username }} {% endblock %}
 {% load custom_filters %}
 {% block content %}
@@ -83,6 +83,7 @@
                         <th>Price</th>
                         <th>24H Change</th>
                         <th>Volume</th>
+                        <th class="d-flex flex-row-reverse">Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,6 +94,7 @@
                             <td>{{ coin.open }}</td>
                             <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
                             <td>{{ coin.baseVolume|format_value }}</td>
+                            <td><a href="{% url "coin_detail" coin.symbol|lower %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
                         </tr>
                         {% endfor %}
 
