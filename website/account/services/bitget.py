@@ -72,3 +72,25 @@ class Bitget(CryptoMarketPlace):
                 context[endpoint.endpoint_name] = results[i]
 
         return context
+            
+    
+    async def get_coin_data(self, symbol):
+        context = {}
+        async with aiohttp.ClientSession() as session:
+                        
+            api_endpoints = await self.get_api_endpoints(1)
+
+            
+            for endpoint in api_endpoints:
+                if endpoint.endpoint_name == 'coins':
+                    coins_response = await self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
+                    coins_data = coins_response.get('data', [])            
+                    for coin in coins_data:
+                        if coin['symbol'] == symbol:
+                            context['coin'] = coin
+                            break
+
+
+
+        return context
+            

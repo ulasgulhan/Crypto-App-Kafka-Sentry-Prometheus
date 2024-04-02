@@ -94,7 +94,7 @@
                             <td>{{ coin.open }}</td>
                             <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
                             <td>{{ coin.baseVolume|format_value }}</td>
-                            <td><a href="{% url "coin_detail" coin.symbol|lower %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
+                            <td><a href="{% url "coin_detail" coin.symbol %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
                         </tr>
                         {% endfor %}
 

@@ -2,5 +2,29 @@
 {% block title %} {{ user.username }} {% endblock %}
 {% load custom_filters %}
 {% block content %}
-        <p>{{ symbol }}</p>
+<div class="card">
+        <div class="card-header">
+            <h4 class="card-title"> {{ coin.symbol }} </h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive small">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Price</th>
+                            <th>24H Change</th>
+                            <th>Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td>{{ coin.open }}</td>
+                                <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
+                                <td>{{ coin.baseVolume|format_value }}</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -15,10 +15,10 @@ class OKX(CryptoMarketPlace):
         self.domain = 'https://www.okx.com'
     
 
-    async def generate_headers(self, url=None, params=None):
+    async def generate_headers(self, url=None, params=None, method=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=3)
 
-        message = self.timestamp + 'GET' + url
+        message = self.timestamp + method + url
 
         headers = {
             'OK-ACCESS-TIMESTAMP': self.timestamp,

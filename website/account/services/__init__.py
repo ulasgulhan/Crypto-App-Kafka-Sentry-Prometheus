@@ -35,7 +35,7 @@ class CryptoMarketPlace():
             else:
                 headers = None
             
-            if url == '/api/v2/mix/order/place-order':
+            if method == 'POST':
                 async with session.request(method, self.domain + url, headers=headers, json=params) as response:
                     return await response.json()
             else:

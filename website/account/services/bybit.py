@@ -15,7 +15,7 @@ class Bybit(CryptoMarketPlace):
     
 
     
-    async def generate_headers(self, url=None, params=''):
+    async def generate_headers(self, url=None, params='', method=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
         api_key = decode(api_info.api_key)
         time = self.session.get_server_time()

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets
 import asyncio
+import pprint
 
 # Create your views here.
 
@@ -79,6 +80,8 @@ def bitget(request):
 
         context = asyncio.run(api_class.get_api_data())
 
+        pprint.pprint(context['coins']['data'][0])
+
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         print(e)
@@ -129,12 +132,18 @@ def get_big_data(request):
 
 @login_required(login_url='/login')
 def coin_detail(request, symbol):
+    try:
+        from .services.bitget import Bitget
 
-    context = {
-        'symbol': symbol
-    }
+        api_class = Bitget(request.user)
+        context = asyncio.run(api_class.get_coin_data(symbol))
 
-    return render(request, 'coin.html', context)
+        return render(request, 'coin.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'coin.html')
+
+
              
 
 
