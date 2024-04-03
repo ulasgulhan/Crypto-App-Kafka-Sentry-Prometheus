@@ -1,3 +1,4 @@
+from ctypes import sizeof
 from django.db import models
 from django.contrib.auth.models import User
 import base64
@@ -7,6 +8,12 @@ import base64
 METHODS_CHOICES = [
     ('GET', 'GET'),
     ('POST', 'POST')
+]
+
+
+FUTURE_CHOICES = [
+    ('Buy', 'Buy'),
+    ('Sell', 'Sell')
 ]
 
 
@@ -58,4 +65,12 @@ class CryptoMarketAPICredentials(models.Model):
             if self.access_passphrase:
                 self.access_passphrase = self.encode(self.access_passphrase)
         super().save(*args, **kwargs)
+
+
+class FuturesTrading(models.Model):
+    user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    coin_symbol     = models.CharField(max_length=200)
+    size            = models.FloatField()
+    price           = models.FloatField()
+    side            = models.CharField(max_length=200, choices=FUTURE_CHOICES)
 
