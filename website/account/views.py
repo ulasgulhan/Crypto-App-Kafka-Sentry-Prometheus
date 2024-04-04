@@ -176,6 +176,21 @@ def bybit_coin_detail(request, symbol):
         return render(request, 'coin_details/bybit_coin.html')
 
 
+@login_required(login_url='/login')
+def okx_coin_detail(request, symbol):
+    try:
+        from .services.okx import OKX
+
+
+        api_class = OKX(request.user)
+        context = asyncio.run(api_class.get_coin_data(symbol))
+
+        return render(request, 'coin_details/okx_coin.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'coin_details/okx_coin.html')
+
+
              
 
 

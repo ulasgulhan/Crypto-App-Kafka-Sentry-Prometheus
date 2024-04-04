@@ -46,3 +46,17 @@ class OKX(CryptoMarketPlace):
                 context[endpoint.endpoint_name] = results[i]
 
         return context
+
+
+    async def get_coin_data(self, symbol):
+        context = {}
+        async with aiohttp.ClientSession() as session:
+                        
+            api_endpoints = await self.get_api_endpoints(crypto_market=3, method='GET', endpoint_name='okx_single_coin')
+
+            
+            for endpoint in api_endpoints:
+                context['coin'] = await self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url + f'{symbol}', method=endpoint.method)  
+
+              
+        return context

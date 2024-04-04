@@ -97,7 +97,7 @@
                             <td>{{ coin.last }}</td>
                             <td>{{ coin.high24h|extract:coin.low24h|division:coin.low24h|multiply:100|floatformat:"2" }}%</td>
                             <td>{{ coin.vol24h|format_value }}</td>
-                            <td><a href="{% url "bitget_coin_detail" coin.instId %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
+                            <td><a href="{% url "okx_coin_detail" coin.instId %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
                         </tr>
                         {% endfor %}
 
