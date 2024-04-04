@@ -131,7 +131,7 @@ def get_big_data(request):
 
 
 @login_required(login_url='/login')
-def coin_detail(request, symbol):
+def bitget_coin_detail(request, symbol):
     try:
         from .services.bitget import Bitget
         from .forms import FuturesForm
@@ -154,10 +154,26 @@ def coin_detail(request, symbol):
         
         context['form'] = form
 
-        return render(request, 'coin.html', context)
+        return render(request, 'coin_details/bitget_coin.html', context)
     except Exception as e:
         print(e)
-        return render(request, 'coin.html')
+        return render(request, 'coin_details/bitget_coin.html')
+
+
+@login_required(login_url='/login')
+def bybit_coin_detail(request, symbol):
+    try:
+        from .services.bybit import Bybit
+
+
+        api_class = Bybit(request.user)
+        context = asyncio.run(api_class.get_coin_data(symbol))
+
+
+        return render(request, 'coin_details/bybit_coin.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'coin_details/bybit_coin.html')
 
 
              

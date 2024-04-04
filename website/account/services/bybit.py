@@ -1,4 +1,5 @@
 import asyncio
+import pprint
 import aiohttp
 from . import CryptoMarketPlace
 from ..utilities import bybit_signature, decode
@@ -34,7 +35,7 @@ class Bybit(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
 
-            api_endpoints = await self.get_api_endpoints(2)
+            api_endpoints = await self.get_api_endpoints(crypto_market=2, method='GET')
 
             tasks = []
             for endpoint in api_endpoints:
@@ -45,4 +46,18 @@ class Bybit(CryptoMarketPlace):
             for i, endpoint in enumerate(api_endpoints):
                 context[endpoint.endpoint_name] = results[i]
 
+        return context
+    
+    async def get_coin_data(self, symbol):
+        context = {}
+        async with aiohttp.ClientSession() as session:
+                        
+            api_endpoints = await self.get_api_endpoints(crypto_market=2, method='GET')
+
+            
+            for endpoint in api_endpoints:
+                if endpoint.endpoint_name == 'bybit_coins':
+                    context['coin'] = await self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params + f'&symbol={symbol}')  
+
+              
         return context

@@ -34,7 +34,7 @@ class OKX(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
 
-            api_endpoints = await self.get_api_endpoints(3)
+            api_endpoints = await self.get_api_endpoints(crypto_market=3, method='GET')
 
             tasks = []
             for endpoint in api_endpoints:

@@ -86,6 +86,7 @@
                         <th>Price</th>
                         <th>24H Change</th>
                         <th>Volume</th>
+                        <th class="d-flex flex-row-reverse">Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,6 +97,7 @@
                             <td>{{ coin.last }}</td>
                             <td>{{ coin.high24h|extract:coin.low24h|division:coin.low24h|multiply:100|floatformat:"2" }}%</td>
                             <td>{{ coin.vol24h|format_value }}</td>
+                            <td><a href="{% url "bitget_coin_detail" coin.instId %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>
                         </tr>
                         {% endfor %}
 
