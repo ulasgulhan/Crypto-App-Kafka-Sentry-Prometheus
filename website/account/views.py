@@ -1,3 +1,4 @@
+from cgi import print_exception
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -80,8 +81,6 @@ def bitget(request):
 
         context = asyncio.run(api_class.get_api_data())
 
-        pprint.pprint(context['coins']['data'][0])
-
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         print(e)
@@ -95,6 +94,7 @@ def bybit(request):
 
         api_class = Bybit(request.user)
         context = asyncio.run(api_class.get_api_data())
+
 
         return render(request, 'sites/bybit.html', context)
     except Exception as e:
@@ -134,9 +134,25 @@ def get_big_data(request):
 def coin_detail(request, symbol):
     try:
         from .services.bitget import Bitget
+        from .forms import FuturesForm
+
 
         api_class = Bitget(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
+
+        if request.method == 'POST':
+            form = FuturesForm(request.POST)
+            if form.is_valid():
+                size = form.cleaned_data['size']
+                price = form.cleaned_data['price']
+                side = form.cleaned_data['side']
+                test = asyncio.run(api_class.post_api_data(symbol, size, price, side))
+                print(test)
+                return redirect('bitget')
+        else:
+            form = FuturesForm()
+        
+        context['form'] = form
 
         return render(request, 'coin.html', context)
     except Exception as e:

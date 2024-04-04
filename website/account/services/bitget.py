@@ -45,25 +45,13 @@ class Bitget(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
 
-            api_endpoints = await self.get_api_endpoints(1)
+            api_endpoints = await self.get_api_endpoints(crypto_market=1, method='GET')
 
-            params = {
-                "symbol": "SBTCSUSDT",
-                "productType": "SUSDT-FUTURES",
-                "marginMode": "isolated",
-                "marginCoin": "SUSDT",
-                "size": "0",
-                "price": "0",
-                "side": "buy",
-                "orderType": "market",
-            }
+
 
             tasks = []
             for endpoint in api_endpoints:
-                if endpoint.method == 'POST':
-                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
-                else:
-                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
+                tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method))
 
 
             results = await asyncio.gather(*tasks)
@@ -78,7 +66,7 @@ class Bitget(CryptoMarketPlace):
         context = {}
         async with aiohttp.ClientSession() as session:
                         
-            api_endpoints = await self.get_api_endpoints(1)
+            api_endpoints = await self.get_api_endpoints(crypto_market=1, method='GET')
 
             
             for endpoint in api_endpoints:
@@ -89,8 +77,37 @@ class Bitget(CryptoMarketPlace):
                         if coin['symbol'] == symbol:
                             context['coin'] = coin
                             break
+        return context
 
 
+    async def post_api_data(self, symbol=None, size=None, price = None, side=None):
+        context = {}
+        async with aiohttp.ClientSession() as session:
+
+            api_endpoints = await self.get_api_endpoints(crypto_market=1, method='POST')
+
+            params = {
+                "symbol": 'SBTCSUSDT',
+                "productType": "SUSDT-FUTURES",
+                "marginMode": "isolated",
+                "marginCoin": "SUSDT",
+                "size": str(size),
+                "price": str(price),
+                "side": str(side),
+                "tradeSide": "open",
+                "orderType": "limit",
+                "force": "gtc",
+            }
+
+            tasks = []
+            for endpoint in api_endpoints:
+                if endpoint.method == 'POST':
+                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
+
+            results = await asyncio.gather(*tasks)
+
+            for i, endpoint in enumerate(api_endpoints):
+                context[endpoint.endpoint_name] = results[i]
 
         return context
             

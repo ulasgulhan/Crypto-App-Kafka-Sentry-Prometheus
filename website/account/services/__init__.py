@@ -21,8 +21,8 @@ class CryptoMarketPlace():
     
 
     @sync_to_async
-    def get_api_endpoints(self, crypto_market):
-        return list(APIEndpoints.objects.filter(crypto_market=crypto_market))
+    def get_api_endpoints(self, crypto_market, method=None):
+        return list(APIEndpoints.objects.filter(crypto_market=crypto_market, method=method))
 
 
     

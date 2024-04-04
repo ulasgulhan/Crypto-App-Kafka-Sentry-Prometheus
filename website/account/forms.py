@@ -1,5 +1,5 @@
 from django import forms
-from .models import CryptoMarketAPICredentials, FuturesTrading
+from .models import CryptoMarketAPICredentials
 
 
 class PassphraseForm(forms.ModelForm):
@@ -21,13 +21,13 @@ class NonePassphraseForm(forms.ModelForm):
         fields = ['access_key', 'secret_key']
 
 
-class FuturesForm(forms.ModelForm):
-    size = forms.CharField(label='size', max_length=200, required=True)
-    price = forms.CharField(label='price', max_length=200, required=True)
-    side = forms.CharField(label='side', max_length=200, required=True)
+class FuturesForm(forms.Form):
 
-
-    class Meta:
-        model = FuturesTrading
-        fields = ['size', 'price', 'side']
+    FUTURE_CHOICES = [
+    ('Buy', 'Buy'),
+    ('Sell', 'Sell')
+    ]
+    size = forms.FloatField(label='size', required=True)
+    price = forms.FloatField(label='price', required=True)
+    side = forms.ChoiceField(label='side', choices=FUTURE_CHOICES, required=True)
 
