@@ -164,10 +164,25 @@ def bitget_coin_detail(request, symbol):
 def bybit_coin_detail(request, symbol):
     try:
         from .services.bybit import Bybit
+        from .forms import FuturesForm
+
 
 
         api_class = Bybit(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
+        if request.method == 'POST':
+            form = FuturesForm(request.POST)
+            if form.is_valid():
+                qty = form.cleaned_data['size']
+                price = form.cleaned_data['price']
+                side = form.cleaned_data['side']
+                test = asyncio.run(api_class.place_order(symbol, side, qty, price))
+                print(test)
+                return redirect('bybit')
+        else:
+            form = FuturesForm()
+        
+        context['form'] = form
 
 
         return render(request, 'coin_details/bybit_coin.html', context)

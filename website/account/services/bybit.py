@@ -1,5 +1,6 @@
 import asyncio
 import pprint
+from unicodedata import category
 import aiohttp
 from . import CryptoMarketPlace
 from ..utilities import bybit_signature, decode
@@ -16,11 +17,11 @@ class Bybit(CryptoMarketPlace):
     
 
     
-    async def generate_headers(self, url=None, params='', method=None):
+    async def generate_headers(self, url=None, params=None, method=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
         api_key = decode(api_info.api_key)
         time = self.session.get_server_time()
-        message = str(time['time']) + api_key + str(5000) + params
+        message = str(time['time']) + api_key + str(5000) + str(params)
 
         headers = {
             'X-BAPI-TIMESTAMP': str(time['time']),
@@ -60,4 +61,24 @@ class Bybit(CryptoMarketPlace):
                     context['coin'] = await self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params + f'&symbol={symbol}')  
 
               
+        return context
+    
+    async def place_order(self, symbol, side, qty, price):
+        context = {}
+        async with aiohttp.ClientSession() as session:
+
+            api_endpoints = await self.get_api_endpoints(crypto_market=2, method='POST', endpoint_name='bybit_place_order')
+
+            params = f'category=spot&symbol={str(symbol)}&side={str(side)}&orderType=Limit&qty={str(qty)}&price={str(price)}'
+
+            tasks = []
+            for endpoint in api_endpoints:
+                if endpoint.method == 'POST':
+                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
+            
+            results = await asyncio.gather(*tasks)
+
+            for i, endpoint in enumerate(api_endpoints):
+                context[endpoint.endpoint_name] = results[i]
+
         return context
