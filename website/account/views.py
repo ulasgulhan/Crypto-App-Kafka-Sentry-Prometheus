@@ -195,10 +195,24 @@ def bybit_coin_detail(request, symbol):
 def okx_coin_detail(request, symbol):
     try:
         from .services.okx import OKX
+        from .forms import FuturesForm
 
 
         api_class = OKX(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
+        if request.method == 'POST':
+            form = FuturesForm(request.POST)
+            if form.is_valid():
+                size = form.cleaned_data['size']
+                price = form.cleaned_data['price']
+                side = form.cleaned_data['side']
+                test = asyncio.run(api_class.place_order(symbol, size, price, side))
+                print(test)
+                return redirect('okx')
+        else:
+            form = FuturesForm()
+        
+        context['form'] = form
 
         return render(request, 'coin_details/okx_coin.html', context)
     except Exception as e:

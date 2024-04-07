@@ -27,7 +27,8 @@ class Bybit(CryptoMarketPlace):
             'X-BAPI-TIMESTAMP': str(time['time']),
             'X-BAPI-API-KEY': api_key,
             'X-BAPI-RECV-WINDOW': str(5000),
-            'X-BAPI-SIGN': bybit_signature(decode(api_info.secret_key), message)
+            'X-BAPI-SIGN': bybit_signature(decode(api_info.secret_key), message),
+            'Content-Type': 'application/json'
         }
 
         return headers
@@ -64,12 +65,13 @@ class Bybit(CryptoMarketPlace):
         return context
     
     async def place_order(self, symbol, side, qty, price):
+        api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
         context = {}
         async with aiohttp.ClientSession() as session:
 
             api_endpoints = await self.get_api_endpoints(crypto_market=2, method='POST', endpoint_name='bybit_place_order')
 
-            params = f'category=spot&symbol={str(symbol)}&side={str(side)}&orderType=Limit&qty={str(qty)}&price={str(price)}'
+            params = f'category=linear&symbol={str(symbol)}&side={str(side)}&orderType=Limit&qty={str(qty)}&price={str(price)}'
 
             tasks = []
             for endpoint in api_endpoints:
