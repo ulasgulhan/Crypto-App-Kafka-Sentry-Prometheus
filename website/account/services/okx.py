@@ -75,12 +75,12 @@ class OKX(CryptoMarketPlace):
 
             api_endpoints = await self.get_api_endpoints(crypto_market=3, method='POST')
 
-            # params = f'instId={str(symbol)}&tdMode=isolated&side={str(side)}&ordType=limit&sz={str(size)}&px={str(price)}'
+            params = f'instId={str(symbol)}&tdMode=isolated&side={str(side)}&ordType=limit&sz={str(size)}&px={str(price)}'
 
             tasks = []
             for endpoint in api_endpoints:
                 if endpoint.method == 'POST':
-                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=endpoint.endpoint_params))
+                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
 
             results = await asyncio.gather(*tasks)
 

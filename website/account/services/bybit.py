@@ -73,6 +73,16 @@ class Bybit(CryptoMarketPlace):
 
             params = f'category=linear&symbol={str(symbol)}&side={str(side)}&orderType=Limit&qty={str(qty)}&price={str(price)}'
 
+            """ params = {
+                "category":"linear",
+                "symbol":"BTCUSDT",
+                "side":"Buy",
+                "orderType":"Limit",
+                "qty":"0.1",
+                "price":"15600",
+            }
+            """
+
             tasks = []
             for endpoint in api_endpoints:
                 if endpoint.method == 'POST':
