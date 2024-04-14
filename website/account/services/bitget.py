@@ -80,7 +80,7 @@ class Bitget(CryptoMarketPlace):
         return context
 
 
-    async def post_api_data(self, symbol=None, size=None, price = None, side=None):
+    async def place_order(self, symbol=None, size=None, price = None, side=None):
         context = {}
         async with aiohttp.ClientSession() as session:
 

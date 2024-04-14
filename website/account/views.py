@@ -146,7 +146,7 @@ def bitget_coin_detail(request, symbol):
                 size = form.cleaned_data['size']
                 price = form.cleaned_data['price']
                 side = form.cleaned_data['side']
-                test = asyncio.run(api_class.post_api_data(symbol, size, price, side))
+                test = asyncio.run(api_class.place_order(symbol, size, price, side))
                 print(test)
                 return redirect('bitget')
         else:
