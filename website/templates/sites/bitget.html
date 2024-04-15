@@ -3,7 +3,7 @@
 {% load custom_filters %}
 {% block content %}
 <br>
-{% if personal_info or account or coins %}
+{% if bitget_personal_info or bitget_account or bitget_coins %}
 <div class="card">
     <div class="card-header">
         <h4 class="card-title">Personal Info</h4>
@@ -23,12 +23,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ personal_info.data.userId }}</td>
-                        <td>{{ personal_info.data.traderType }}</td>
-                        <td>{{ account.data.marginCoin }}</td>
-                        <td>{{ account.data.accountEquity }}</td>
-                        <td>{{ account.data.usdtEquity }}</td>
-                        <td>{{ account.data.btcEquity }}</td>
+                        <td>{{ bitget_personal_info.data.userId }}</td>
+                        <td>{{ bitget_personal_info.data.traderType }}</td>
+                        <td>{{ bitget_account.data.marginCoin }}</td>
+                        <td>{{ bitget_account.data.accountEquity }}</td>
+                        <td>{{ bitget_account.data.usdtEquity }}</td>
+                        <td>{{ bitget_account.data.btcEquity }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -50,7 +50,7 @@
                 </thead>
                 <tbody>
                     {% with has_assets=False %}
-                        {% for asset in account_assets.data %}
+                        {% for asset in bitget_account_assets.data %}
                             {% if asset.available > '0' %}
                                 {% with has_assets=True %}
                                     <tr>
@@ -88,10 +88,10 @@
                 </thead>
                 <tbody>
 
-                        {% for coin in coins.data %}
+                        {% for coin in bitget_coins.data %}
                         <tr>
                             <td>{{ coin.symbol }}</td>
-                            <td>{{ coin.open }}</td>
+                            <td>{{ coin.open24h }}</td>
                             <td>{{ coin.change24h|multiply:100|floatformat:"2" }}%</td>
                             <td>{{ coin.baseVolume|format_value }}</td>
                             <td><a href="{% url "bitget_coin_detail" coin.symbol %}" class="btn btn-md btn-success float-end me-2 ms-2">Details</a></td>

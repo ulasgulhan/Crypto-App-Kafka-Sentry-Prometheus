@@ -27,9 +27,9 @@
                         <td>{{ okx_info.data.0.level }}</td>
                         <td>USDT</td>
                         {% if okx_account.data.0.details %}
-                            <td>{{ bybit_account.result.list.0.totalEquity }}</td>
                             <td>{{ okx_account.data.0.totalEq }}</td>
-                            <td>{{ bybit_account.result.list.0.coin.0.equity }}</td>
+                            <td>{{ okx_account.data.0.details }}</td>
+                            <td>{{ okx_account.data.0.details }}</td>
                         {% else %}
                             <td>0</td>
                             <td>0</td>

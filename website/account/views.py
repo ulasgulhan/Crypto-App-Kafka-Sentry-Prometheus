@@ -81,6 +81,7 @@ def bitget(request):
 
         context = asyncio.run(api_class.get_api_data())
 
+
         return render(request, 'sites/bitget.html', context)
     except Exception as e:
         print(e)
@@ -109,6 +110,8 @@ def okx(request):
 
         api_class = OKX(request.user)
         context = asyncio.run(api_class.get_api_data())
+
+        print(context['okx_account_assets'])
 
         return render(request, 'sites/okx.html', context)
     except Exception as e:

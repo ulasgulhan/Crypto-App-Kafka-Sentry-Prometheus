@@ -70,7 +70,7 @@ class Bitget(CryptoMarketPlace):
 
             
             for endpoint in api_endpoints:
-                if endpoint.endpoint_name == 'coins':
+                if endpoint.endpoint_name == 'bitget_coins':
                     coins_response = await self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method)
                     coins_data = coins_response.get('data', [])            
                     for coin in coins_data:
