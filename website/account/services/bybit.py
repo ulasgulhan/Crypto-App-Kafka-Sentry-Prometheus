@@ -6,14 +6,18 @@ from . import CryptoMarketPlace
 from ..utilities import bybit_signature, decode
 from asgiref.sync import sync_to_async
 from pybit.unified_trading import HTTP
-
+import urllib.parse
+import json
+import time
 
 class Bybit(CryptoMarketPlace):
     def __init__(self, user):
         super().__init__()
         self.user = user
         self.domain = 'https://api.bybit.com'
-        self.session = HTTP(testnet=True)
+        self.apikey = None
+        self.secret_key= None
+        self.session = HTTP(testnet=False)
     
 
     
@@ -66,31 +70,28 @@ class Bybit(CryptoMarketPlace):
     
     async def place_order(self, symbol, side, qty, price):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
+        api_key = decode(api_info.api_key)
+        secret_key = decode(api_info.secret_key)
         context = {}
         async with aiohttp.ClientSession() as session:
 
+            session = HTTP(
+                testnet=False,
+                api_key=api_key,
+                api_secret=secret_key,
+            )
             api_endpoints = await self.get_api_endpoints(crypto_market=2, method='POST', endpoint_name='bybit_place_order')
 
-            params = f'category=linear&symbol={str(symbol)}&side={str(side)}&orderType=Limit&qty={str(qty)}&price={str(price)}'
-
-            """ params = {
-                "category":"linear",
-                "symbol":"BTCUSDT",
-                "side":"Buy",
-                "orderType":"Limit",
-                "qty":"0.1",
-                "price":"15600",
-            }
-            """
-
-            tasks = []
-            for endpoint in api_endpoints:
-                if endpoint.method == 'POST':
-                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
-            
-            results = await asyncio.gather(*tasks)
+            results = session.place_order(
+                category="spot",
+                symbol=str(symbol),
+                side=str(side),
+                orderType="Limit",
+                qty=str(qty),
+                price=str(price),
+            )
 
             for i, endpoint in enumerate(api_endpoints):
-                context[endpoint.endpoint_name] = results[i]
+                context[endpoint.endpoint_name] = results
 
         return context
