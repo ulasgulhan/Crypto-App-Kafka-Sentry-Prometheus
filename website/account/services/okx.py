@@ -4,6 +4,8 @@ from . import CryptoMarketPlace
 from ..utilities import okx_signature, decode
 import datetime as dt
 from asgiref.sync import sync_to_async
+import okx.Trade as Trade
+import okx.SpreadTrading as SpreadTrading
 
 
 
@@ -18,11 +20,7 @@ class OKX(CryptoMarketPlace):
     async def generate_headers(self, url=None, params=None, method=None):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=3)
 
-
-
         if params:
-            endpoint = url + '?' + params
-            print(endpoint)
             message = self.timestamp + method + url + '?' + params
         else:
             message = self.timestamp + method + url
@@ -70,22 +68,28 @@ class OKX(CryptoMarketPlace):
         return context
     
     async def place_order(self, symbol=None, size=None, price=None, side=None):
+        api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=3)
+        api_key = decode(api_info.api_key)
+        secret_key = decode(api_info.secret_key)
+        access_passphrase = decode(api_info.access_passphrase)
         context = {}
         async with aiohttp.ClientSession() as session:
 
+            tradeAPI = Trade.TradeAPI(api_key, secret_key, access_passphrase, False, '0')
+
+            results = tradeAPI.place_order(
+                instId=str(symbol),
+                tdMode="isolated",
+                side=str(side),
+                ordType="limit",
+                px=str(price),
+                sz=str(size)
+            )
+
             api_endpoints = await self.get_api_endpoints(crypto_market=3, method='POST')
 
-            params = f'instId={str(symbol)}&tdMode=isolated&side={str(side)}&ordType=limit&sz={str(size)}&px={str(price)}'
-
-            tasks = []
-            for endpoint in api_endpoints:
-                if endpoint.method == 'POST':
-                    tasks.append(self.fetcher(session, endpoint.auth_required, url=endpoint.endpoint_url, method=endpoint.method, params=params))
-
-            results = await asyncio.gather(*tasks)
-
             for i, endpoint in enumerate(api_endpoints):
-                context[endpoint.endpoint_name] = results[i]
+                context[endpoint.endpoint_name] = results
 
         return context
             
