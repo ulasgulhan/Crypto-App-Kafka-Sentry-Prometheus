@@ -68,15 +68,13 @@ class CryptoMarketAPICredentials(models.Model):
 
 class Membership(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memberships', verbose_name="User")
-    subscriber  = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers', verbose_name="Subscribed User")
+    subscribers = models.ManyToManyField(User, related_name='subscriptions', verbose_name="Subscribers")
 
 
     class Meta:
         verbose_name = "Membership"
         verbose_name_plural = "Memberships"
     
-    def __str__(self) -> str:
-        return self.user
 
 
 

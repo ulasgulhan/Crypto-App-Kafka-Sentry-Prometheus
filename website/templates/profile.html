@@ -81,6 +81,38 @@
               </div>
             </div>
           </div>
+          <br>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Become Copy Trader</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th>Copy Trade Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {% if user.is_copy_trader %}
+                        <td>Copy Trader</td>
+                        <td>
+                          <a href="{% url "copy_trade" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Deactivate</a>
+                        </td>
+                      {% else %}
+                        <td>Not a Copy Trader</td>
+                        <td>
+                          <a href="{% url "copy_trade" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Activate</a>
+                        </td>
+                      {% endif %}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     

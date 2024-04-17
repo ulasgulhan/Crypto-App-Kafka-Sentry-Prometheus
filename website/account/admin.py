@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from .models import APIEndpoints, CryptoMarketAPICredentials, CryptoMarkets
+from .models import APIEndpoints, CryptoMarketAPICredentials, CryptoMarkets, Membership
 
 
 # Register your models here.
@@ -24,6 +24,13 @@ class CryptoMarketsAdmin(admin.ModelAdmin):
         if db_field.name == 'slug':
             kwargs['widget'] = forms.TextInput(attrs={'readonly': 'readonly'})
         return super().formfield_for_dbfield(db_field, **kwargs)
+
+
+class MembershipAdmin(admin.ModelAdmin):
+    list_display        = ('user_username',)
+
+    def user_username(self, obj):
+        return obj.user.username
  
 
 
@@ -31,4 +38,5 @@ class CryptoMarketsAdmin(admin.ModelAdmin):
 admin.site.register(APIEndpoints, APIEndpointsAdmin)
 admin.site.register(CryptoMarketAPICredentials, CryptoMarketAPICredentialsAdmin)
 admin.site.register(CryptoMarkets, CryptoMarketsAdmin)
+admin.site.register(Membership, MembershipAdmin)
 

@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
-from .models import CryptoMarketAPICredentials, CryptoMarkets
+from .models import CryptoMarketAPICredentials, CryptoMarkets, User
 import asyncio
 import pprint
 
@@ -17,7 +17,7 @@ def profile(request):
 
     crypto_markets = CryptoMarkets.objects.filter(is_active=True)
     api_info = CryptoMarketAPICredentials.objects.filter(user=request.user)
-
+    
 
     context = {
         'user': user,
@@ -30,6 +30,18 @@ def profile(request):
     context['connection'] = api_connection
     
     return render(request, 'profile.html', context)
+
+
+def copy_trader(request, user_id):
+    user = User.objects.get(id=user_id)
+    if user.is_copy_trader:
+        user.is_copy_trader = False
+    else:
+        user.is_copy_trader = True
+    user.save()
+    return redirect('profile')
+
+    
 
 
 # region Access
