@@ -66,3 +66,17 @@ class CryptoMarketAPICredentials(models.Model):
         super().save(*args, **kwargs)
 
 
+class Membership(models.Model):
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memberships', verbose_name="User")
+    subscriber  = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers', verbose_name="Subscribed User")
+
+
+    class Meta:
+        verbose_name = "Membership"
+        verbose_name_plural = "Memberships"
+    
+    def __str__(self) -> str:
+        return self.user
+
+
+
