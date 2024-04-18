@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
-from .models import CryptoMarketAPICredentials, CryptoMarkets, User
+from .models import CryptoMarketAPICredentials, CryptoMarkets, User, Membership
 import asyncio
 import pprint
 
@@ -41,6 +41,40 @@ def copy_trader(request, user_id):
     user.save()
     return redirect('profile')
 
+
+def copy_trader_list(request):
+    users = User.objects.filter(is_copy_trader=True)
+    subscriber = request.user
+    subscription_status = {}
+    
+    for user in users:
+        is_subscribed = Membership.objects.filter(user=user, subscribers=subscriber).exists()
+        if is_subscribed:
+            subscription_status[user.id] = is_subscribed
+
+    print(subscription_status)
+    context = {
+        'users': users,
+        'subscription_status': subscription_status
+    }
+
+    return render(request, 'membership.html', context)
+
+
+def subscribe(request, user_id):
+    copy_trader = User.objects.get(id=user_id)
+    subscriber = request.user
+
+    is_subscribed = Membership.objects.filter(user=copy_trader, subscribers=subscriber).exists()
+
+    if is_subscribed:
+        membership_instance = Membership.objects.get(user=copy_trader)
+        membership_instance.subscribers.remove(subscriber)
+    else:
+        membership_instance, _ = Membership.objects.get_or_create(user=copy_trader)
+        membership_instance.subscribers.add(subscriber)
+
+    return redirect('copy_trader_list')
     
 
 

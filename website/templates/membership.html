@@ -1,0 +1,56 @@
+{%extends 'base.html'%}
+{% block title %} {{ user.username }} {% endblock %}
+{% load custom_filters %}
+{% block content %}
+<!-- ========================= SECTION MAIN ========================= -->
+
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION  ========================= -->
+<section class="section-name padding-y-sm">
+    <div class="container">    
+    <div class="row mt-2">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Your Profile</div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Username</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.last_name }}</td>
+                        <td>{{ user.username }}</td>
+                        {% if user.id in subscription_status %}
+                        <td>
+                            <a href="{% url "subscribe" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Unsubscribe</a>
+                        </td>
+                        {% else %}
+                        <td>
+                            <a href="{% url "subscribe" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Subscribe</a>
+                        </td>
+                        {% endif %}
+
+                    </tr>
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+      </div>
+    
+    </div><!-- container // -->
+    </section>
+{% endblock %}
