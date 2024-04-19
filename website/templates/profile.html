@@ -62,7 +62,7 @@
                           {{ market.name }} API Connected
                         </td>
                         <td>
-                          <a href="{% url "delete" market.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Delete Your Api Key</a>
+                          <a href="{% url "delete" market.id %}" class="btn btn-md btn-danger float-end me-2 ms-2">Delete Your Api Key</a>
                         </td>
                         {% else %}
                         <td>
@@ -97,7 +97,7 @@
                       {% if user.is_copy_trader %}
                         <td>Copy Trader</td>
                         <td>
-                          <a href="{% url "copy_trader" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Deactivate</a>
+                          <a href="{% url "copy_trader" user.id %}" class="btn btn-md btn-danger float-end me-2 ms-2">Deactivate</a>
                         </td>
                       {% else %}
                         <td>Not a Copy Trader</td>

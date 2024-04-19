@@ -33,7 +33,7 @@
                         <td>{{ user.username }}</td>
                         {% if user.id in subscription_status %}
                         <td>
-                            <a href="{% url "subscribe" user.id %}" class="btn btn-md btn-success float-end me-2 ms-2">Unsubscribe</a>
+                            <a href="{% url "subscribe" user.id %}" class="btn btn-md btn-danger float-end me-2 ms-2">Unsubscribe</a>
                         </td>
                         {% else %}
                         <td>
