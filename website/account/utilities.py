@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import base64
+import json
 
 
 
@@ -23,5 +24,8 @@ def okx_signature(secret_key, message):
     signature = hash.digest()
     return base64.b64encode(signature)
 
+
+def kafka_producer_serializer(message):
+    return json.dumps(message).encode('utf-8')
 
 

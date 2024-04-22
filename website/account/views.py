@@ -1,11 +1,8 @@
-from cgi import print_exception
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets, User, Membership
 import asyncio
-import pprint
 
 # Create your views here.
 
@@ -43,7 +40,7 @@ def copy_trader(request, user_id):
 
 
 def copy_trader_list(request):
-    users = User.objects.filter(is_copy_trader=True)
+    users = User.objects.filter(is_copy_trader=True).exclude(id=request.user.id)
     subscriber = request.user
     subscription_status = {}
     
@@ -52,7 +49,6 @@ def copy_trader_list(request):
         if is_subscribed:
             subscription_status[user.id] = is_subscribed
 
-    print(subscription_status)
     context = {
         'users': users,
         'subscription_status': subscription_status
