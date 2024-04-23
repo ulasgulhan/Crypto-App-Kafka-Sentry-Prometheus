@@ -32,6 +32,7 @@ def profile(request):
     return render(request, 'profile.html', context)
 
 
+@login_required(login_url='/login')
 def copy_trader(request, user_id):
     user = User.objects.get(id=user_id)
     if user.is_copy_trader:
@@ -42,6 +43,7 @@ def copy_trader(request, user_id):
     return redirect('profile')
 
 
+@login_required(login_url='/login')
 def copy_trader_list(request):
     users = User.objects.filter(is_copy_trader=True).exclude(id=request.user.id)
     subscriber = request.user
@@ -60,6 +62,7 @@ def copy_trader_list(request):
     return render(request, 'membership.html', context)
 
 
+@login_required(login_url='/login')
 def subscribe(request, user_id):
     copy_trader = User.objects.get(id=user_id)
     subscriber = request.user
@@ -196,7 +199,8 @@ def bitget_coin_detail(request, symbol):
                 side = form.cleaned_data['side']
                 result = asyncio.run(api_class.place_order(symbol, size, price, side))
                 if result['bitget_place_order']['msg'] == 'success':
-                    producer.send('copy-trade', result)
+                    message = {'symbol': symbol, 'size': size, 'side': side, 'price': price}
+                    producer.send('copy-trade', message)
                     producer.flush()
                     producer.close()
                 print(result)
