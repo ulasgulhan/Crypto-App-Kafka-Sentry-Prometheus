@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets, User, Membership
 import asyncio
-from kafka import KafkaProducer
-from .utilities import kafka_producer_serializer
+from .producer import producer
 
 
 # Create your views here.
@@ -187,7 +186,7 @@ def bitget_coin_detail(request, symbol):
         from .services.bitget import Bitget
         from .forms import FuturesForm
 
-        producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=kafka_producer_serializer)
+        
         api_class = Bitget(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
 
@@ -201,8 +200,6 @@ def bitget_coin_detail(request, symbol):
                 if result['bitget_place_order']['msg'] == 'success':
                     message = {'symbol': symbol, 'size': size, 'side': side, 'price': price}
                     producer.send('copy-trade', message)
-                    producer.flush()
-                    producer.close()
                 print(result)
                 return redirect('bitget')
         else:
@@ -222,8 +219,6 @@ def bybit_coin_detail(request, symbol):
         from .services.bybit import Bybit
         from .forms import FuturesForm
 
-
-        producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=kafka_producer_serializer)
         api_class = Bybit(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
         if request.method == 'POST':
@@ -235,7 +230,6 @@ def bybit_coin_detail(request, symbol):
                 result = asyncio.run(api_class.place_order(symbol, side, qty, price))
                 producer.send('copy-trade', result)
                 producer.flush()
-                producer.close()
                 print(result)
                 return redirect('bybit')
         else:
@@ -256,7 +250,6 @@ def okx_coin_detail(request, symbol):
         from .services.okx import OKX
         from .forms import FuturesForm
 
-        producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=kafka_producer_serializer)
         api_class = OKX(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
         if request.method == 'POST':
@@ -269,7 +262,6 @@ def okx_coin_detail(request, symbol):
                 if result['okx_place_order']['code'] == '0':
                     producer.send('copy-trade', result)
                     producer.flush()
-                    producer.close()
                 print(result)
                 return redirect('okx')
         else:
