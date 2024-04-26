@@ -11,6 +11,7 @@ urlpatterns = [
     path('bybit/', views.bybit, name='bybit'),
     path('okx/', views.okx, name='okx'),
     path('copy-traders/', views.copy_trader_list, name='copy_trader_list'),
+    path('copy-trade-subscribers/<int:sub>/<str:symbol>/<int:size>/<int:price>/<str:side>/<str:site>', views.copy_trade_all_subscribers, name='copy_trader_subscribers'),
 
     path('<int:user_id>', views.copy_trader, name='copy_trader'),
     path('copy-traders/<int:user_id>', views.subscribe, name='subscribe' ),

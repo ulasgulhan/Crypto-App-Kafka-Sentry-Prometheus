@@ -1,9 +1,13 @@
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from account.forms import PassphraseForm, NonePassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets, User, Membership
 import asyncio
 from .producer import producer
+from .services.okx import OKX
+from .services.bitget import Bitget
+from .services.bybit import Bybit
 
 
 # Create your views here.
@@ -186,10 +190,8 @@ def bitget_coin_detail(request, symbol):
         from .services.bitget import Bitget
         from .forms import FuturesForm
 
-        
         api_class = Bitget(request.user)
         context = asyncio.run(api_class.get_coin_data(symbol))
-
         if request.method == 'POST':
             form = FuturesForm(request.POST)
             if form.is_valid():
@@ -198,7 +200,7 @@ def bitget_coin_detail(request, symbol):
                 side = form.cleaned_data['side']
                 result = asyncio.run(api_class.place_order(symbol, size, price, side))
                 if result['bitget_place_order']['msg'] == 'success':
-                    message = {'symbol': symbol, 'size': size, 'side': side, 'price': price}
+                    message = {'symbol': symbol, 'size': size, 'side': side, 'price': price, 'trader_id': request.user.id, 'site': 'bitget'}
                     producer.send('copy-trade', message)
                 print(result)
                 return redirect('bitget')
@@ -275,6 +277,19 @@ def okx_coin_detail(request, symbol):
         return render(request, 'coin_details/okx_coin.html')
 
 
-             
+def copy_trade_all_subscribers(request, sub, symbol, size, price, side, site):
+    try:
+        if request.method == 'POST':
+            if site == 'bitget':
+                user = User.objects.get(sub)
+                api_class = Bitget(user)
+                result = asyncio.run(api_class.place_order(symbol, size, price, side))
+                print(result)
+                return JsonResponse({'status': 'success'})
+        else:
+            return HttpResponseNotFound()
+    except Exception as e:
+        print(e)
+        
 
 
