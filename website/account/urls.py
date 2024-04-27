@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.get_big_data, name='all_data'),
+    path('csrf_token/', views.get_csrf_token, name='csrf_token'),
 
     path('profile/', views.profile, name='profile'),
 

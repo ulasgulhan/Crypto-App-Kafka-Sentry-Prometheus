@@ -1,7 +1,9 @@
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
-from account.forms import PassphraseForm, NonePassphraseForm
+from django.views.decorators.csrf import csrf_exempt
+
+from account.forms import NonePassphraseForm, PassphraseForm
 from .models import CryptoMarketAPICredentials, CryptoMarkets, User, Membership
 import asyncio
 from .producer import producer
@@ -12,6 +14,12 @@ from .services.bybit import Bybit
 
 # Create your views here.
 
+@csrf_exempt
+def get_csrf_token(request):
+  if request.method == 'GET':
+    return HttpResponse(request.META.get('CSRF_TOKEN'))
+  else:
+    return HttpResponseNotFound()
 
 @login_required(login_url='/login')
 def profile(request):
@@ -285,7 +293,8 @@ def copy_trade_all_subscribers(request, sub, symbol, size, price, side, site):
                 api_class = Bitget(user)
                 result = asyncio.run(api_class.place_order(symbol, size, price, side))
                 print(result)
-                return JsonResponse({'status': 'success'})
+                data = {'status': 'success'}
+                return JsonResponse(data)
         else:
             return HttpResponseNotFound()
     except Exception as e:
