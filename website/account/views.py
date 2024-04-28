@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from django.middleware.csrf import get_token
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -14,12 +15,12 @@ from .services.bybit import Bybit
 
 # Create your views here.
 
-@csrf_exempt
+""" @csrf_exempt
 def get_csrf_token(request):
   if request.method == 'GET':
     return HttpResponse(request.META.get('CSRF_TOKEN'))
   else:
-    return HttpResponseNotFound()
+    return HttpResponseNotFound() """
 
 @login_required(login_url='/login')
 def profile(request):
@@ -289,16 +290,26 @@ def copy_trade_all_subscribers(request, sub, symbol, size, price, side, site):
     try:
         if request.method == 'POST':
             if site == 'bitget':
-                user = User.objects.get(sub)
+                user = User.objects.get(id=sub)
                 api_class = Bitget(user)
                 result = asyncio.run(api_class.place_order(symbol, size, price, side))
                 print(result)
                 data = {'status': 'success'}
-                return JsonResponse(data)
+                print(data)
         else:
             return HttpResponseNotFound()
     except Exception as e:
         print(e)
+
+
+def get_csrf_token(request):
+    if request.method == 'GET':
+        csrf_token = get_token(request)
+        response = JsonResponse({'csrf_token': csrf_token})
+        response.set_cookie('csrftoken', csrf_token)
+        return response
+    else:
+        return HttpResponseNotFound()
         
 
 
