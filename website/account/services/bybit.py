@@ -1,14 +1,11 @@
 import asyncio
-import pprint
 from unicodedata import category
 import aiohttp
 from . import CryptoMarketPlace
 from ..utilities import bybit_signature, decode
 from asgiref.sync import sync_to_async
 from pybit.unified_trading import HTTP
-import urllib.parse
-import json
-import time
+
 
 class Bybit(CryptoMarketPlace):
     def __init__(self, user):
@@ -68,7 +65,7 @@ class Bybit(CryptoMarketPlace):
               
         return context
     
-    async def place_order(self, symbol, side, qty, price):
+    async def place_order(self, symbol, side, size, price):
         api_info = await sync_to_async(self.db_model.objects.get)(user=self.user, crypto_market=2)
         api_key = decode(api_info.api_key)
         secret_key = decode(api_info.secret_key)
@@ -87,7 +84,7 @@ class Bybit(CryptoMarketPlace):
                 symbol=str(symbol),
                 side=str(side),
                 orderType="Limit",
-                qty=str(qty),
+                qty=str(size),
                 price=str(price),
             )
 

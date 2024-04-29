@@ -15,13 +15,6 @@ from .services.bybit import Bybit
 
 # Create your views here.
 
-""" @csrf_exempt
-def get_csrf_token(request):
-  if request.method == 'GET':
-    return HttpResponse(request.META.get('CSRF_TOKEN'))
-  else:
-    return HttpResponseNotFound() """
-
 @login_required(login_url='/login')
 def profile(request):
     user = request.user
@@ -235,11 +228,12 @@ def bybit_coin_detail(request, symbol):
         if request.method == 'POST':
             form = FuturesForm(request.POST)
             if form.is_valid():
-                qty = form.cleaned_data['size']
+                size = form.cleaned_data['size']
                 price = form.cleaned_data['price']
                 side = form.cleaned_data['side']
-                result = asyncio.run(api_class.place_order(symbol, side, qty, price))
-                producer.send('copy-trade', result)
+                result = asyncio.run(api_class.place_order(symbol, side, size, price))
+                message = {'symbol': symbol, 'size': size, 'side': side, 'price': price, 'trader_id': request.user.id, 'site': 'bybit'}
+                producer.send('copy-trade', message)
                 producer.flush()
                 print(result)
                 return redirect('bybit')
@@ -271,7 +265,8 @@ def okx_coin_detail(request, symbol):
                 side = form.cleaned_data['side']
                 result = asyncio.run(api_class.place_order(symbol, size, price, side))
                 if result['okx_place_order']['code'] == '0':
-                    producer.send('copy-trade', result)
+                    message = {'symbol': symbol, 'size': size, 'side': side, 'price': price, 'trader_id': request.user.id, 'site': 'okx'}
+                    producer.send('copy-trade', message)
                     producer.flush()
                 print(result)
                 return redirect('okx')
@@ -286,6 +281,7 @@ def okx_coin_detail(request, symbol):
         return render(request, 'coin_details/okx_coin.html')
 
 
+@csrf_exempt
 def copy_trade_all_subscribers(request, sub, symbol, size, price, side, site):
     try:
         if request.method == 'POST':
@@ -296,6 +292,23 @@ def copy_trade_all_subscribers(request, sub, symbol, size, price, side, site):
                 print(result)
                 data = {'status': 'success'}
                 print(data)
+                return HttpResponse('Success')
+            elif site == 'bybit':
+                user = User.objects.get(id=sub)
+                api_class = Bybit(user)
+                result = asyncio.run(api_class.place_order(symbol, side, size, price))
+                print(result)
+                data = {'status': 'success'}
+                print(data)
+                return HttpResponse('Success')
+            elif site == 'okx':
+                user = User.objects.get(id=sub)
+                api_class = OKX(user)
+                result = asyncio.run(api_class.place_order(symbol, size, price, side))
+                print(result)
+                data = {'status': 'success'}
+                print(data)
+                return HttpResponse('Success')
         else:
             return HttpResponseNotFound()
     except Exception as e:
