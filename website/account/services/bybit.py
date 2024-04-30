@@ -1,5 +1,4 @@
 import asyncio
-from unicodedata import category
 import aiohttp
 from . import CryptoMarketPlace
 from ..utilities import bybit_signature, decode

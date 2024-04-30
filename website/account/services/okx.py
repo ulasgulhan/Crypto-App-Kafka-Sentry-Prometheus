@@ -5,7 +5,6 @@ from ..utilities import okx_signature, decode
 import datetime as dt
 from asgiref.sync import sync_to_async
 import okx.Trade as Trade
-import okx.SpreadTrading as SpreadTrading
 
 
 
