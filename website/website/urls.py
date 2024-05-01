@@ -18,10 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
+
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.landing, name='landing'),
     path('', include('django.contrib.auth.urls')),
     path('', include('authentication.urls')),
-    path('account/', include('account.urls'))
+    path('account/', include('account.urls')),
+    path('sentry-debug/', views.trigger_error),
 ]

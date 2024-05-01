@@ -6,3 +6,7 @@ def landing(request):
         return redirect('all_data')
     else:
         return render(request, 'landing.html')
+
+
+def trigger_error(request):
+    division_by_zero = 1 / 0

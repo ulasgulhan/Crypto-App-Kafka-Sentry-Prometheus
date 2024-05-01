@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sentry_sdk
 
 load_dotenv()
 
@@ -126,6 +127,11 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+sentry_sdk.init(
+    dsn="https://examplePublicKey@o0.ingest.sentry.io/0",
+    enable_tracing=True,
+)
 
 
 # Static files (CSS, JavaScript, Images)
