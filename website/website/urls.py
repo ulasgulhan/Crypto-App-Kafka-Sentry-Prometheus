@@ -28,4 +28,5 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('account/', include('account.urls')),
     path('sentry-debug/', views.trigger_error),
+    path('', include('django_prometheus.urls')),
 ]
