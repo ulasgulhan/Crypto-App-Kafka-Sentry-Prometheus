@@ -129,8 +129,14 @@ USE_I18N = True
 USE_TZ = True
 
 sentry_sdk.init(
-    dsn="https://examplePublicKey@o0.ingest.sentry.io/0",
-    enable_tracing=True,
+    dsn="https://f6e71394c660c0cdb16e5971aada5bba@o4507244865912832.ingest.de.sentry.io/4507249291100240",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
 )
 
 
