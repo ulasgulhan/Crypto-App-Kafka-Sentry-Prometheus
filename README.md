@@ -1,4 +1,4 @@
-# CryptoApp Kafka-Sentry-Prometheus-Docker (Under Development)
+# CryptoApp Kafka-Sentry-Prometheus-Docker
 
 # Overview
 
